@@ -20,6 +20,7 @@ export class UsersService {
     newUser.user_password = createUserDto.user_password;
     newUser.user_creationdate = createUserDto.user_creationdate;
     this.usersRepository.save(newUser);
+    return newUser;
   }
 
   findAllUsers(): Promise<User[]> {
@@ -43,6 +44,7 @@ export class UsersService {
     updateUser.user_pronouns = updateUserDto.user_pronouns;
 
     this.usersRepository.save(updateUser);
+    return updateUser;
   }
 
   async removeUser(id: string): Promise<void> {

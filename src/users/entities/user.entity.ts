@@ -17,10 +17,10 @@ export class User {
   @Column({ type: 'text',default: "" })
   user_bio: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50,default: ""  })
   user_profile_picture: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50,default: ""  })
   user_banner_picture: string;
 
   @Column({ type: 'varchar', length: 50,default: "" })
@@ -29,7 +29,7 @@ export class User {
   @Column({ type: 'varchar', length: 50,default: ""  })
   user_subtitle: string;
 
-  @Column({ type: 'date' })
+  @Column({ type: 'date',default: null  })
   user_creationdate: Date;
 
 }
