@@ -1,8 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Post } from 'src/posts/entities/post.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -31,5 +32,8 @@ export class User {
 
   @Column({ type: 'date'  })
   user_creationdate: Date;
+
+  @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
+  posts: [];
 
 }
