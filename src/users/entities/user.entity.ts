@@ -29,7 +29,7 @@ export class User {
   @Column({ type: 'varchar', length: 50,default: ""  })
   user_subtitle: string;
 
-  @Column({ type: 'date',default: null  })
+  @Column({ type: 'date'  })
   user_creationdate: Date;
 
 }

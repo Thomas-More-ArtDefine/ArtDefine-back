@@ -8,5 +8,4 @@ export class CreateUserDto {
     user_profile_banner: string;
     user_pronouns: string;
     user_subtitle: string;
-    user_creationdate: Date;
 }

@@ -18,7 +18,7 @@ export class UsersService {
     newUser.user_name = createUserDto.user_name;
     newUser.user_email = createUserDto.user_email;
     newUser.user_password = createUserDto.user_password;
-    newUser.user_creationdate = createUserDto.user_creationdate;
+    newUser.user_creationdate = new Date();
     this.usersRepository.save(newUser);
     return newUser;
   }
