@@ -14,17 +14,12 @@ export class UsersService {
   ) {}
 
   createUser(createUserDto: CreateUserDto) {
-    const newUser: User = new User();
-    newUser.user_name = createUserDto.user_name;
-    newUser.user_email = createUserDto.user_email;
-    newUser.user_password = createUserDto.user_password;
-    newUser.user_creationdate = new Date();
-    this.usersRepository.save(newUser);
-    return newUser;
+    this.usersRepository.save(createUserDto);
+    return createUserDto;
   }
 
-  findAllUsers(): Promise<User[]> {
-    return this.usersRepository.find();
+  async findAllUsers(): Promise<User[]> {
+    return getBasicUserInfoArray(await this.usersRepository.find());
   }
 
   async findAllFollowing(id: string) {
@@ -38,7 +33,7 @@ export class UsersService {
   });
   let following: User[] = [];
 
-  following = this.getBasicUserInfoArray(user.following);
+  following = getBasicUserInfoArray(user.following);
 
     return following;
   }
@@ -50,13 +45,13 @@ export class UsersService {
     }
     });
 
-    let followers: User[] = this.getBasicUserInfoArray(users);
+    let followers: User[] = getBasicUserInfoArray(users);
 
     return followers;
   }
 
-  findOneUser(id: string): Promise<User | null> {
-    return this.usersRepository.findOneBy({ id });
+  async findOneUser(id: string): Promise<User | null> {
+    return getProfileUserInfo(await this.usersRepository.findOneBy({ id }));
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
@@ -79,18 +74,37 @@ export class UsersService {
   async removeUser(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }
+}
 
-  getBasicUserInfoArray(array:User[]) {
+function getBasicUserInfoArray(array:User[]) {
     const cleanedArray: User[] = [];
     array.forEach( function (user){
-      let cleanedUser: User = new User();
-      cleanedUser.id = user.id;
-      cleanedUser.user_name = user.user_name;
-      cleanedUser.user_subtitle = user.user_subtitle;
-      cleanedUser.user_profile_picture = user.user_profile_picture;
+      let cleanedUser: User = getBasicUserInfo(user);
   
       cleanedArray.push(cleanedUser);
     })
     return cleanedArray;
   }
-}
+
+function getBasicUserInfo(user:User):User{
+    const cleanedUser: User = new User();
+    cleanedUser.id = user.id;
+    cleanedUser.user_name = user.user_name;
+    cleanedUser.user_subtitle = user.user_subtitle;
+    cleanedUser.user_profile_picture = user.user_profile_picture;
+    return cleanedUser;
+  }
+
+  function getProfileUserInfo(user:User){
+    const cleanedUser: User = new User();
+    cleanedUser.id = user.id;
+    cleanedUser.user_name = user.user_name;
+    cleanedUser.user_subtitle = user.user_subtitle;
+    cleanedUser.user_pronouns = user.user_pronouns;
+    cleanedUser.user_bio = user.user_bio;
+    cleanedUser.user_profile_picture = user.user_profile_picture;
+    cleanedUser.user_banner_picture = user.user_banner_picture;
+    cleanedUser.user_creationdate = user.user_creationdate;
+    return cleanedUser;
+  }
+

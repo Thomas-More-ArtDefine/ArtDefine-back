@@ -24,4 +24,7 @@ export class Post {
 
     @Column({ type: 'text', default: "" })
     post_description: string;
+
+    @Column({ type: 'date', default: new Date()  })
+    post_uploaddate: Date;
 }

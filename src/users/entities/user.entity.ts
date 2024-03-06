@@ -1,3 +1,4 @@
+import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 
@@ -30,11 +31,17 @@ export class User {
   @Column({ type: 'varchar', length: 50,default: ""  })
   user_subtitle: string;
 
-  @Column({ type: 'date'  })
+  @Column({ type: 'date', default: new Date()  })
   user_creationdate: Date;
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
   posts: [];
+
+  @OneToMany(type => Directmessage, directmessage => directmessage.sender)
+  send_messages: [];
+
+  @OneToMany(type => Directmessage, directmessage => directmessage.receiver)
+  received_messages: [];
 
   @ManyToMany(type => User)
   @JoinTable()

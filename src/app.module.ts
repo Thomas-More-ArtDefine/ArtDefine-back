@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { PostsModule } from './posts/posts.module';
 import { Post } from './posts/entities/post.entity';
+import { DirectmessagesModule } from './directmessages/directmessages.module';
+import { Directmessage } from './directmessages/entities/directmessage.entity';
 
 @Module({
   imports: [
@@ -16,11 +18,12 @@ import { Post } from './posts/entities/post.entity';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post],
+      entities: [User,Post,Directmessage],
       synchronize: true,
     }),
     UsersModule,
     PostsModule,
+    DirectmessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -7,4 +7,5 @@ export class CreatePostDto {
     post_description:string;
     post_tags:string;
     user:User;
+    post_uploaddate:Date;
 }
