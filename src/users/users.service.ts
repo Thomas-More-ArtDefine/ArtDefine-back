@@ -27,6 +27,34 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  async findAllFollowing(id: string) {
+    const user: User = await this.usersRepository.findOne({
+      relations: {
+        following: true,
+      },
+      where: {
+        id: id,
+    }
+  });
+  let following: User[] = [];
+
+  following = this.getBasicUserInfoArray(user.following);
+
+    return following;
+  }
+
+  async findAllFollowers(id: string) {
+    const users: User[] = await this.usersRepository.find({
+      where: {
+        following: {id: id},
+    }
+    });
+
+    let followers: User[] = this.getBasicUserInfoArray(users);
+
+    return followers;
+  }
+
   findOneUser(id: string): Promise<User | null> {
     return this.usersRepository.findOneBy({ id });
   }
@@ -42,6 +70,7 @@ export class UsersService {
     updateUser.user_banner_picture = updateUserDto.user_banner_picture;
     updateUser.user_subtitle = updateUserDto.user_subtitle;
     updateUser.user_pronouns = updateUserDto.user_pronouns;
+    updateUser.following = updateUserDto.following;
 
     this.usersRepository.save(updateUser);
     return updateUser;
@@ -49,5 +78,19 @@ export class UsersService {
 
   async removeUser(id: string): Promise<void> {
     await this.usersRepository.delete(id);
+  }
+
+  getBasicUserInfoArray(array:User[]) {
+    const cleanedArray: User[] = [];
+    array.forEach( function (user){
+      let cleanedUser: User = new User();
+      cleanedUser.id = user.id;
+      cleanedUser.user_name = user.user_name;
+      cleanedUser.user_subtitle = user.user_subtitle;
+      cleanedUser.user_profile_picture = user.user_profile_picture;
+  
+      cleanedArray.push(cleanedUser);
+    })
+    return cleanedArray;
   }
 }

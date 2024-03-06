@@ -1,5 +1,5 @@
 import { Post } from 'src/posts/entities/post.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()
 export class User {
@@ -35,5 +35,9 @@ export class User {
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
   posts: [];
+
+  @ManyToMany(type => User)
+  @JoinTable()
+  following: User[]
 
 }

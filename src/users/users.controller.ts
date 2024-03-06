@@ -21,6 +21,15 @@ export class UsersController {
   findOne(@Param('id') id: string) {
     return this.usersService.findOneUser(id);
   }
+  @Get(':id/following')
+  findFollowing(@Param('id') id: string) {
+    return this.usersService.findAllFollowing(id);
+  }
+
+  @Get(':id/followers')
+  findFollowers(@Param('id') id: string) {
+    return this.usersService.findAllFollowers(id);
+  }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
