@@ -20,10 +20,10 @@ export class User {
   @Column({ type: 'text',default: "" })
   user_bio: string;
 
-  @Column({ type: 'varchar', length: 50,default: ""  })
+  @Column({ type: 'varchar', length: 250,default: ""  })
   user_profile_picture: string;
 
-  @Column({ type: 'varchar', length: 50,default: ""  })
+  @Column({ type: 'varchar', length: 250,default: ""  })
   user_banner_picture: string;
 
   @Column({ type: 'varchar', length: 50,default: "" })
@@ -36,7 +36,7 @@ export class User {
   user_creationdate: Date;
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
-  posts: [];
+  posts: []; 
 
   @OneToMany(type => Group, group => group.creator)
   made_groups: [];

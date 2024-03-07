@@ -25,10 +25,10 @@ export class Group {
     @Column({ type: 'text', default: "" })
     group_bio: string;
 
-    @Column({ type: 'varchar', length: 50, default: "" })
+    @Column({ type: 'text', default: "" })
     group_profile_picture: string;
 
-    @Column({ type: 'varchar', length: 50, default: "" })
+    @Column({ type: 'text', default: "" })
     group_banner_picture: string;
 
     @Column({ type: 'bool', default: false })
