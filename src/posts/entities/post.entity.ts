@@ -3,14 +3,14 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 't
 
 @Entity()
 export class Post {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn()
     id: string;
 
     @ManyToOne(type => User, user => user.posts, { cascade: true })
     @JoinColumn({name: 'user_id'})
     user: User;
 
-    @Column({ type: 'uuid', name: 'user_id' })
+    @Column({ type: 'string', name: 'user_id' })
     user_id: string;
 
     @Column({ type: 'text' })

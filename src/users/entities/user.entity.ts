@@ -1,10 +1,11 @@
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
+import { Group } from 'src/group/entities/group.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn()
   id: string;
 
   @Column({ type: 'varchar', length: 50 })
@@ -36,6 +37,9 @@ export class User {
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
   posts: [];
+
+  @OneToMany(type => Group, group => group.creator)
+  made_groups: [];
 
   @OneToMany(type => Directmessage, directmessage => directmessage.sender)
   send_messages: [];

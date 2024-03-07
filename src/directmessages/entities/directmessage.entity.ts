@@ -6,14 +6,14 @@ export class Directmessage {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({ type: 'uuid', name: 'sender_id' })
+    @Column({ type: 'string', name: 'sender_id' })
     sender_id: string;
 
     @ManyToOne(type => User, user => user.send_messages)
     @JoinColumn({name: 'sender_id'})
     sender: User;
 
-    @Column({ type: 'uuid', name: 'receiver_id' })
+    @Column({ type: 'string', name: 'receiver_id' })
     receiver_id: string;
 
     @ManyToOne(type => User, user => user.received_messages)
