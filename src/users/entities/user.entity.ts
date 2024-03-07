@@ -1,5 +1,6 @@
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
 import { Group } from 'src/group/entities/group.entity';
+import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 
@@ -40,6 +41,9 @@ export class User {
 
   @OneToMany(type => Group, group => group.creator)
   made_groups: [];
+
+  @OneToMany(type => GroupMember, groupMember => groupMember.member)
+  groups: [];
 
   @OneToMany(type => Directmessage, directmessage => directmessage.sender)
   send_messages: [];

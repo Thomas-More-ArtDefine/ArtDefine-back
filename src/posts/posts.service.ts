@@ -45,6 +45,6 @@ export class PostsService {
   }
 
   async removePost(id: string) {
-    await this.postsRepository.delete(id);
+    return await this.postsRepository.delete(id);
   }
 }

@@ -42,6 +42,6 @@ export class DirectmessagesService {
   }
 
   async deleteMessage(id: string) {
-    await this.messagesRepository.delete(id);
+    return await this.messagesRepository.delete(id);
   }
 }

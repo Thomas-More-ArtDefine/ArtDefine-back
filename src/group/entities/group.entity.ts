@@ -1,3 +1,4 @@
+import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -36,4 +37,7 @@ export class Group {
 
     @Column({ type: 'date', default: null })
     group_queued_deletion_date: Date;
+
+    @OneToMany(type => GroupMember, groupMember => groupMember.group)
+    members: [];
 }

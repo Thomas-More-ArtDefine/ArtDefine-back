@@ -12,20 +12,20 @@ export class GroupService {
     private readonly groupsRepository: Repository<Group>,
   ) {}
 
-  create(createGroupDto: CreateGroupDto) {
+  createGroup(createGroupDto: CreateGroupDto) {
     this.groupsRepository.save(createGroupDto);
     return createGroupDto;
   }
 
-  findAll() {
+  findAllGroups() {
     return this.groupsRepository.find();
   }
 
-  findOne(id: string) {
+  findOneGroup(id: string) {
     return this.groupsRepository.findOneBy({ id });
   }
 
-  async update(id: string, updateGroupDto: UpdateGroupDto) {
+  async updateGroup(id: string, updateGroupDto: UpdateGroupDto) {
     let updateGroup: Group = await this.groupsRepository.findOneBy({ id });
 
     
@@ -34,13 +34,17 @@ export class GroupService {
     updateGroup.group_profile_picture = updateGroupDto.group_profile_picture;
     updateGroupDto.group_banner_picture = updateGroupDto.group_banner_picture;
     updateGroup.group_userlimit = updateGroupDto.group_userlimit;
-    updateGroup.group_queued_deletion = updateGroupDto.group_queued_deletion;
+
+    if ((updateGroup.group_queued_deletion === false) && (updateGroupDto.group_queued_deletion === true)) {
+      updateGroup.group_queued_deletion = updateGroupDto.group_queued_deletion;
+      updateGroup.group_queued_deletion_date = new Date();
+    }
 
     this.groupsRepository.save(updateGroup);
     return updateGroup;
   }
 
-  async remove(id: string) {
-    await this.groupsRepository.delete(id);
+  async removeGroup(id: string) {
+    return await this.groupsRepository.delete(id);
   }
 }

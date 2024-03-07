@@ -9,26 +9,26 @@ export class GroupController {
 
   @Post()
   create(@Body() createGroupDto: CreateGroupDto) {
-    return this.groupService.create(createGroupDto);
+    return this.groupService.createGroup(createGroupDto);
   }
 
   @Get()
   findAll() {
-    return this.groupService.findAll();
+    return this.groupService.findAllGroups();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.groupService.findOne(id);
+    return this.groupService.findOneGroup(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupService.update(id, updateGroupDto);
+    return this.groupService.updateGroup(id, updateGroupDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.groupService.remove(id);
+    return this.groupService.removeGroup(id);
   }
 }
