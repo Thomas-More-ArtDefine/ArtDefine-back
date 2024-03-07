@@ -20,10 +20,10 @@ export class User {
   @Column({ type: 'text',default: "" })
   user_bio: string;
 
-  @Column({ type: 'varchar', length: 250,default: ""  })
+  @Column({ type: 'text', default: ""  })
   user_profile_picture: string;
 
-  @Column({ type: 'varchar', length: 250,default: ""  })
+  @Column({ type: 'text',default: ""  })
   user_banner_picture: string;
 
   @Column({ type: 'varchar', length: 50,default: "" })
