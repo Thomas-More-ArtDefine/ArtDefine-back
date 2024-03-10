@@ -1,5 +1,5 @@
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
-import { Group } from 'src/group/entities/group.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';

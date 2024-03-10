@@ -13,7 +13,8 @@ export class GroupMemberService {
   ) {}
 
   createGroupMember(createGroupMemberDto: CreateGroupMemberDto) {
-    return this.groupMembersRepository.save(createGroupMemberDto);
+    this.groupMembersRepository.save(createGroupMemberDto);
+    return createGroupMemberDto;
   }
 
   findAllGroupMembers() {

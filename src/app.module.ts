@@ -8,8 +8,8 @@ import { PostsModule } from './posts/posts.module';
 import { Post } from './posts/entities/post.entity';
 import { DirectmessagesModule } from './directmessages/directmessages.module';
 import { Directmessage } from './directmessages/entities/directmessage.entity';
-import { GroupModule } from './group/group.module';
-import { Group } from './group/entities/group.entity';
+import { GroupsModule } from './groups/groups.module';
+import { Group } from './groups/entities/group.entity';
 import { GroupMemberModule } from './group_member/group_member.module';
 import { GroupMember } from './group_member/entities/group_member.entity';
 
@@ -28,8 +28,8 @@ import { GroupMember } from './group_member/entities/group_member.entity';
     UsersModule,
     PostsModule,
     DirectmessagesModule,
-    GroupModule,
     GroupMemberModule,
+    GroupsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -41,3 +41,4 @@ export class Group {
     @OneToMany(type => GroupMember, groupMember => groupMember.group)
     members: [];
 }
+
