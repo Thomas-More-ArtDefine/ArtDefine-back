@@ -14,6 +14,8 @@ import { GroupMemberModule } from './group_member/group_member.module';
 import { GroupMember } from './group_member/entities/group_member.entity';
 import { LinksModule } from './links/links.module';
 import { Link } from './links/entities/link.entity';
+import { FoldersModule } from './folders/folders.module';
+import { Folder } from './folders/entities/folder.entity';
 
 @Module({
   imports: [
@@ -24,7 +26,7 @@ import { Link } from './links/entities/link.entity';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post,Directmessage, Group, GroupMember, Link],
+      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder],
       synchronize: true,
     }),
     UsersModule,
@@ -33,6 +35,7 @@ import { Link } from './links/entities/link.entity';
     GroupMemberModule,
     GroupsModule,
     LinksModule,
+    FoldersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

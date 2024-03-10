@@ -9,6 +9,7 @@ export class GroupsController {
 
   @Post()
   create(@Body() createGroupDto: CreateGroupDto) {
+    //add a way to make creator directly a member
     return this.groupsService.createGroup(createGroupDto);
   }
 

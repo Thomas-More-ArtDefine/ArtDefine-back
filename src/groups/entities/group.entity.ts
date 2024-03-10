@@ -1,3 +1,4 @@
+import { Folder } from 'src/folders/entities/folder.entity';
 import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { Link } from 'src/links/entities/link.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -44,5 +45,8 @@ export class Group {
 
     @OneToMany(type => Link, link => link.group)
     links: [];
+
+    @OneToMany(type => Folder, folder => folder.group)
+    folders: [];
 }
 

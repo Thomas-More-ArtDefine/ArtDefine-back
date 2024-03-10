@@ -14,6 +14,7 @@ export class GroupsService {
     private readonly groupsRepository: Repository<Group>,
   ) {}
 
+  //add a way to make creator directly a member
   createGroup(createGroupDto: CreateGroupDto) {
     this.groupsRepository.save(createGroupDto);
     return createGroupDto;
@@ -23,16 +24,18 @@ export class GroupsService {
     return getBasicGroupInfoArray(await this.groupsRepository.find());
   }
 
-  findOneGroup(id: string) {
-    return this.groupsRepository.findOne({
+  async findOneGroup(id: string) {
+    let group: Group = await this.groupsRepository.findOne({
       relations: {
         creator: true,
         links: true
       },
       where: {
         id: id,
-    }
-  });
+      }
+    });
+    group.creator = getBasicUserInfo(group.creator);
+    return group;
   }
 
   async getGroupMembers(id: string){
