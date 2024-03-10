@@ -27,6 +27,7 @@ export class GroupsService {
     return this.groupsRepository.findOne({
       relations: {
         creator: true,
+        links: true
       },
       where: {
         id: id,

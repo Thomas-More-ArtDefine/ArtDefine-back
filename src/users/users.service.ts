@@ -51,7 +51,16 @@ export class UsersService {
   }
 
   async findOneUser(id: string): Promise<User | null> {
-    return getProfileUserInfo(await this.usersRepository.findOneBy({ id }));
+    return getProfileUserInfo(
+      await this.usersRepository.findOne({
+        relations: {
+          links: true,
+        },
+        where: {
+          id: id,
+      }
+    })
+    );
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
@@ -105,6 +114,7 @@ function getBasicUserInfo(user:User):User{
     cleanedUser.user_profile_picture = user.user_profile_picture;
     cleanedUser.user_banner_picture = user.user_banner_picture;
     cleanedUser.user_creationdate = user.user_creationdate;
+    cleanedUser.links = user.links;
     return cleanedUser;
   }
 

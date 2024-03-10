@@ -12,6 +12,8 @@ import { GroupsModule } from './groups/groups.module';
 import { Group } from './groups/entities/group.entity';
 import { GroupMemberModule } from './group_member/group_member.module';
 import { GroupMember } from './group_member/entities/group_member.entity';
+import { LinksModule } from './links/links.module';
+import { Link } from './links/entities/link.entity';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { GroupMember } from './group_member/entities/group_member.entity';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post,Directmessage, Group, GroupMember],
+      entities: [User,Post,Directmessage, Group, GroupMember, Link],
       synchronize: true,
     }),
     UsersModule,
@@ -30,6 +32,7 @@ import { GroupMember } from './group_member/entities/group_member.entity';
     DirectmessagesModule,
     GroupMemberModule,
     GroupsModule,
+    LinksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

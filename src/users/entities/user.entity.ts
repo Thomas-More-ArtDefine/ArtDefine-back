@@ -3,6 +3,7 @@ import { Group } from 'src/groups/entities/group.entity';
 import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
+import { Link } from 'src/links/entities/link.entity';
 
 @Entity()
 export class User {
@@ -50,6 +51,9 @@ export class User {
 
   @OneToMany(type => Directmessage, directmessage => directmessage.receiver)
   received_messages: [];
+
+  @OneToMany(type => Link, link => link.user)
+  links: [];
 
   @ManyToMany(type => User)
   @JoinTable()

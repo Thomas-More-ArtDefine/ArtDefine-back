@@ -1,4 +1,5 @@
 import { GroupMember } from 'src/group_member/entities/group_member.entity';
+import { Link } from 'src/links/entities/link.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -40,5 +41,8 @@ export class Group {
 
     @OneToMany(type => GroupMember, groupMember => groupMember.group)
     members: [];
+
+    @OneToMany(type => Link, link => link.group)
+    links: [];
 }
 
