@@ -10,14 +10,14 @@ export class GroupMember {
     @Column({ type: 'uuid', name: 'member_id' })
     member_id: string;
 
-    @ManyToOne(type => User, user => user.groups, { cascade: true })
+    @ManyToOne(type => User, user => user.groups)
     @JoinColumn({name: 'member_id'})
     member: User;
 
     @Column({ type: 'uuid', name: 'group_id' })
     group_id: string;
 
-    @ManyToOne(type => Group, group => group.members, { cascade: true })
+    @ManyToOne(type => Group, group => group.members)
     @JoinColumn({name: 'group_id'})
     group: Group;
 

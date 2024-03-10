@@ -4,6 +4,8 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './entities/group.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
+import { User } from 'src/users/entities/user.entity';
+import { GroupMember } from 'src/group_member/entities/group_member.entity';
 
 @Injectable()
 export class GroupsService {
@@ -34,13 +36,25 @@ export class GroupsService {
 
   async getGroupMembers(id: string){
     const group: Group = await this.groupsRepository.findOne({
-      relations: {
-        members: true,
-      },
+      // relations: {
+      //   members: true,
+      // },
       where: {
         id: id,
+    },
+    join: {
+        alias: "group",
+        leftJoinAndSelect: {
+            "members": "group.members",
+            "member": "members.member"
+        }
     }
   });
+
+  group.members.forEach( function (group_member:GroupMember){
+    group_member.member = getBasicUserInfo(group_member.member);
+  })
+
   return group;
   }
 
@@ -98,4 +112,13 @@ function getBasicGroupInfoArray(array:Group[]) {
     cleanedArray.push(cleanedGroup);
   })
   return cleanedArray;
+}
+
+function getBasicUserInfo(user:User):User{
+  const cleanedUser: User = new User();
+  cleanedUser.id = user.id;
+  cleanedUser.user_name = user.user_name;
+  cleanedUser.user_subtitle = user.user_subtitle;
+  cleanedUser.user_profile_picture = user.user_profile_picture;
+  return cleanedUser;
 }
