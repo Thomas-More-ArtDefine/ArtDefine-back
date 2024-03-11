@@ -16,6 +16,10 @@ import { LinksModule } from './links/links.module';
 import { Link } from './links/entities/link.entity';
 import { FoldersModule } from './folders/folders.module';
 import { Folder } from './folders/entities/folder.entity';
+import { FeedbackTemplatesModule } from './feedback_templates/feedback_templates.module';
+import { FeedbackQuestionModule } from './feedback_question/feedback_question.module';
+import { FeedbackQuestion } from './feedback_question/entities/feedback_question.entity';
+import { FeedbackTemplate } from './feedback_templates/entities/feedback_template.entity';
 
 @Module({
   imports: [
@@ -26,7 +30,7 @@ import { Folder } from './folders/entities/folder.entity';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder],
+      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder, FeedbackQuestion, FeedbackTemplate],
       synchronize: true,
     }),
     UsersModule,
@@ -36,6 +40,8 @@ import { Folder } from './folders/entities/folder.entity';
     GroupsModule,
     LinksModule,
     FoldersModule,
+    FeedbackTemplatesModule,
+    FeedbackQuestionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

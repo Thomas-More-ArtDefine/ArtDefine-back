@@ -1,6 +1,7 @@
+import { FeedbackTemplate } from 'src/feedback_templates/entities/feedback_template.entity';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
 
 @Entity()
 export class Post {
@@ -31,4 +32,8 @@ export class Post {
 
     @ManyToMany(type => Folder, folder => folder.posts)
     folders: Folder[]
+
+    @OneToOne(type => FeedbackTemplate, template => template.post, {cascade: true})
+    @JoinColumn()
+    feedback_template: FeedbackTemplate
 }
