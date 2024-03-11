@@ -22,6 +22,16 @@ export class FoldersController {
     return this.foldersService.findOneFolder(id);
   }
 
+  @Get('user/:id')
+  findByUserId(@Param('id') id: string) {
+    return this.foldersService.findFoldersByUserId(id);
+  }
+
+  @Get('group/:id')
+  findByGroupId(@Param('id') id: string) {
+    return this.foldersService.findFoldersByGroupId(id);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateFolderDto: UpdateFolderDto) {
     return this.foldersService.updateFolder(id, updateFolderDto);

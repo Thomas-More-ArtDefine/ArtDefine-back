@@ -30,12 +30,28 @@ export class FoldersService {
     return this.foldersRepository.findOneBy({ id });
   }
 
+  findFoldersByGroupId(id: string) {
+    return this.foldersRepository.find({
+      where: {
+        group_id: id
+      }
+    });
+  }
+
+  findFoldersByUserId(id: string) {
+    return this.foldersRepository.find({
+      where: {
+        user_id: id
+      }
+    });
+  }
+
   async updateFolder(id: string, updateFolderDto: UpdateFolderDto) {
     let updateFolder: Folder = await this.foldersRepository.findOneBy({ id });
     updateFolder.folder_name = updateFolderDto.folder_name;
     updateFolder.folder_description = updateFolderDto.folder_bio;
     updateFolder.folder_archived = updateFolderDto.folder_archived;
-    updateFolder.visibility = updateFolderDto.visibility;
+    updateFolder.folder_visibility = updateFolderDto.folder_visibility;
     this.foldersRepository.save(updateFolder);
     return updateFolder;
   }

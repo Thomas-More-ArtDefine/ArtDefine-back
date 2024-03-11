@@ -9,5 +9,5 @@ export class CreateFolderDto {
     @IsString()
     folder_name: string;
     @IsEnum(visibility)
-    visibility: visibility;
+    folder_visibility: visibility;
 }

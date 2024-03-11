@@ -11,5 +11,5 @@ export class UpdateFolderDto extends PartialType(CreateFolderDto) {
     @IsBoolean()
     folder_archived: boolean;
     @IsEnum(visibility)
-    visibility: visibility;
+    folder_visibility: visibility;
 }

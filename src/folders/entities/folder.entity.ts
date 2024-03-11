@@ -41,5 +41,5 @@ export class Folder {
         enum: visibility,
         default: visibility.PRIVATE
     })
-    visibility: visibility;
+    folder_visibility: visibility;
 }
