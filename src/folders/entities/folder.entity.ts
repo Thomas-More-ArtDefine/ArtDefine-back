@@ -1,4 +1,5 @@
 import { Group } from 'src/groups/entities/group.entity';
+import { Post } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -42,4 +43,8 @@ export class Folder {
         default: visibility.PRIVATE
     })
     folder_visibility: visibility;
+
+    @ManyToMany(type => Post, post => post.folders)
+    @JoinTable()
+    posts: Post[]
 }

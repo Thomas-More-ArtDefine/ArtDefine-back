@@ -1,12 +1,13 @@
+import { Folder } from 'src/folders/entities/folder.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany } from 'typeorm';
 
 @Entity()
 export class Post {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @ManyToOne(type => User, user => user.posts, { cascade: true })
+    @ManyToOne(type => User, user => user.posts, { onDelete: "CASCADE" })
     @JoinColumn({name: 'user_id'})
     user: User;
 
@@ -27,4 +28,7 @@ export class Post {
 
     @Column({ type: 'date', default: new Date()  })
     post_uploaddate: Date;
+
+    @ManyToMany(type => Folder, folder => folder.posts)
+    folders: Folder[]
 }

@@ -32,7 +32,14 @@ export class PostsService {
   }
 
   findOnePost(id: string): Promise<Post> {
-    return this.postsRepository.findOneBy({ id });
+    return this.postsRepository.findOne({
+      where: {
+        id: id,
+    },
+    relations: {
+      folders: true
+    }
+    });
   }
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {

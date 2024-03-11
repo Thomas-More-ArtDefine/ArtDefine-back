@@ -46,6 +46,19 @@ export class FoldersService {
     });
   }
 
+  async getAllPostsInFolder(id: string){
+    const folder: Folder = await this.foldersRepository.findOne({
+      where: {
+        id: id
+      },
+      relations: {
+        posts: true
+      }
+    });
+
+    return folder.posts;
+  }
+
   async updateFolder(id: string, updateFolderDto: UpdateFolderDto) {
     let updateFolder: Folder = await this.foldersRepository.findOneBy({ id });
     updateFolder.folder_name = updateFolderDto.folder_name;

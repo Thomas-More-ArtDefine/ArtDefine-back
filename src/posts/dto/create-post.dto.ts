@@ -1,5 +1,6 @@
 import { User } from "src/users/entities/user.entity";
-import { IsEmpty, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsEmpty, IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { Folder } from "src/folders/entities/folder.entity";
 
 // further validation to be added
 export class CreatePostDto {
@@ -12,6 +13,8 @@ export class CreatePostDto {
     @IsString()
     post_tags:string;
     
-
+    @IsArray()
+    folders: Folder[];
+    @IsObject()
     user:User;
 }

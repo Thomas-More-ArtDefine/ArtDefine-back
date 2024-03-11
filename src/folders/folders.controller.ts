@@ -22,6 +22,12 @@ export class FoldersController {
     return this.foldersService.findOneFolder(id);
   }
 
+  @Get(':id/posts')
+  getPosts(@Param('id') id: string) {
+    return this.foldersService.getAllPostsInFolder(id);
+  }
+
+
   @Get('user/:id')
   findByUserId(@Param('id') id: string) {
     return this.foldersService.findFoldersByUserId(id);
