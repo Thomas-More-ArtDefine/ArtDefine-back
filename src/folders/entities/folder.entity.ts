@@ -14,6 +14,7 @@ export enum visibility {
 export class Folder {
     @PrimaryGeneratedColumn()
     id: string;
+
     @Column({ type: 'uuid', default: null })
     user_id: string;
     
@@ -46,5 +47,5 @@ export class Folder {
 
     @ManyToMany(type => Post, post => post.folders)
     @JoinTable()
-    posts: Post[]
+    posts: Post[];
 }

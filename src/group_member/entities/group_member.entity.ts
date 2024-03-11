@@ -1,6 +1,7 @@
+import { GroupRank } from 'src/group_rank/entities/group_rank.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity()
 export class GroupMember {
@@ -23,4 +24,11 @@ export class GroupMember {
 
     @Column({ type: 'date', default: new Date()  })
     member_join_date: Date;
+
+    @Column({ type: 'uuid', name: 'grouprank_id', default: null })
+    grouprank_id: string;
+
+    @OneToOne(type => GroupRank, rank => rank.group_member, {cascade: true})
+    @JoinColumn({name: 'grouprank_id'})
+    rank: GroupRank
 }

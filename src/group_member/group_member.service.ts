@@ -25,9 +25,12 @@ export class GroupMemberService {
     return this.groupMembersRepository.findOneBy({ id });
   }
 
-  //to be updated after userrank is added
-  updateGroupMember(id: string, updateGroupMemberDto: UpdateGroupMemberDto) {
-    return `This action updates a #${id} groupMember`;
+
+  async updateGroupMember(id: string, updateGroupMemberDto: UpdateGroupMemberDto) {
+    let updateMember: GroupMember = await this.groupMembersRepository.findOneBy({ id });
+    updateMember.rank = updateGroupMemberDto.rank;
+    this.groupMembersRepository.save(updateMember);
+    return updateMember;
   }
 
   async removeGroupMember(id: string) {
