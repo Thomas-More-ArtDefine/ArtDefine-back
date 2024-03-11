@@ -5,6 +5,7 @@ import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 import { Link } from 'src/links/entities/link.entity';
 import { Folder } from 'src/folders/entities/folder.entity';
+import { FeedbackResult } from 'src/feedback_result/entities/feedback_result.entity';
 
 @Entity()
 export class User {
@@ -58,6 +59,9 @@ export class User {
 
   @OneToMany(type => Folder, folder => folder.user)
   folders: [];
+
+  @OneToMany(type => FeedbackResult, feedback => feedback.user)
+  given_feedback: [];
 
   @ManyToMany(type => User)
   @JoinTable()
