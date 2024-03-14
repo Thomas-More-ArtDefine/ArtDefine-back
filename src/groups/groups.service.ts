@@ -5,7 +5,7 @@ import { Group } from './entities/group.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { User } from 'src/users/entities/user.entity';
-import { GroupMember } from 'src/group_member/entities/group_member.entity';
+import { GroupMember } from 'src/group_members/entities/group_member.entity';
 
 @Injectable()
 export class GroupsService {

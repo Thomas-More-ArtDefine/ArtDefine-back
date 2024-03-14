@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateGroupDto } from './create-group.dto';
-import { Rule } from 'src/rule/entities/rule.entity';
+import { Rule } from 'src/rules/entities/rule.entity';
 import { IsArray, IsBoolean, IsDate, IsString } from 'class-validator';
 
 export class UpdateGroupDto extends PartialType(CreateGroupDto) {

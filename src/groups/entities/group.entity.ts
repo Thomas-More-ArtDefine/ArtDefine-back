@@ -1,7 +1,7 @@
 import { Folder } from 'src/folders/entities/folder.entity';
-import { GroupMember } from 'src/group_member/entities/group_member.entity';
+import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { Link } from 'src/links/entities/link.entity';
-import { Rule } from 'src/rule/entities/rule.entity';
+import { Rule } from 'src/rules/entities/rule.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 

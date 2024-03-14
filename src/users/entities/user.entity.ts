@@ -1,12 +1,12 @@
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
 import { Group } from 'src/groups/entities/group.entity';
-import { GroupMember } from 'src/group_member/entities/group_member.entity';
+import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
 import { Link } from 'src/links/entities/link.entity';
 import { Folder } from 'src/folders/entities/folder.entity';
-import { FeedbackResult } from 'src/feedback_result/entities/feedback_result.entity';
-import { Rule } from 'src/rule/entities/rule.entity';
+import { FeedbackResult } from 'src/feedback_results/entities/feedback_result.entity';
+import { Rule } from 'src/rules/entities/rule.entity';
 
 @Entity()
 export class User {
