@@ -6,6 +6,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMan
 import { Link } from 'src/links/entities/link.entity';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { FeedbackResult } from 'src/feedback_result/entities/feedback_result.entity';
+import { Rule } from 'src/rule/entities/rule.entity';
 
 @Entity()
 export class User {
@@ -45,7 +46,7 @@ export class User {
   @OneToMany(type => Group, group => group.creator)
   made_groups: [];
 
-  @OneToMany(type => GroupMember, groupMember => groupMember.member)
+  @OneToMany(type => GroupMember, groupMember => groupMember.member, {onDelete:'CASCADE'})
   groups: [];
 
   @OneToMany(type => Directmessage, directmessage => directmessage.sender)
@@ -54,10 +55,10 @@ export class User {
   @OneToMany(type => Directmessage, directmessage => directmessage.receiver)
   received_messages: [];
 
-  @OneToMany(type => Link, link => link.user)
+  @OneToMany(type => Link, link => link.user, {onDelete:'CASCADE'})
   links: [];
 
-  @OneToMany(type => Folder, folder => folder.user)
+  @OneToMany(type => Folder, folder => folder.user, {onDelete:'CASCADE'})
   folders: [];
 
   @OneToMany(type => FeedbackResult, feedback => feedback.user)
@@ -66,5 +67,9 @@ export class User {
   @ManyToMany(type => User)
   @JoinTable()
   following: User[]
+
+  @ManyToMany(type => Rule, {onDelete: "CASCADE"})
+  @JoinTable()
+  Rules: [];
 
 }

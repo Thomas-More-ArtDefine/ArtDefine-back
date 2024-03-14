@@ -1,6 +1,7 @@
 import { Folder } from 'src/folders/entities/folder.entity';
 import { GroupMember } from 'src/group_member/entities/group_member.entity';
 import { Link } from 'src/links/entities/link.entity';
+import { Rule } from 'src/rule/entities/rule.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -40,13 +41,17 @@ export class Group {
     @Column({ type: 'date', default: null })
     group_queued_deletion_date: Date;
 
-    @OneToMany(type => GroupMember, groupMember => groupMember.group)
-    members: [];
+    @OneToMany(type => GroupMember, groupMember => groupMember.group, {onDelete: "CASCADE"})
+    members: GroupMember[];
 
-    @OneToMany(type => Link, link => link.group)
-    links: [];
+    @OneToMany(type => Link, link => link.group, {onDelete: "CASCADE"})
+    links: Link[];
 
-    @OneToMany(type => Folder, folder => folder.group)
-    folders: [];
+    @OneToMany(type => Folder, folder => folder.group, {onDelete: "CASCADE"})
+    folders: Folder[];
+
+    @ManyToMany(type => Rule, {onDelete: "CASCADE"})
+    @JoinTable()
+    Rules: Rule[];
 }
 

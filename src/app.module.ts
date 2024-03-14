@@ -24,6 +24,8 @@ import { FeedbackResultModule } from './feedback_result/feedback_result.module';
 import { FeedbackResult } from './feedback_result/entities/feedback_result.entity';
 import { GroupRankModule } from './group_rank/group_rank.module';
 import { GroupRank } from './group_rank/entities/group_rank.entity';
+import { RuleModule } from './rule/rule.module';
+import { Rule } from './rule/entities/rule.entity';
 
 @Module({
   imports: [
@@ -34,7 +36,7 @@ import { GroupRank } from './group_rank/entities/group_rank.entity';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder, FeedbackQuestion, FeedbackTemplate, FeedbackResult, GroupRank],
+      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder, FeedbackQuestion, FeedbackTemplate, FeedbackResult, GroupRank, Rule],
       synchronize: true,
     }),
     UsersModule,
@@ -48,6 +50,7 @@ import { GroupRank } from './group_rank/entities/group_rank.entity';
     FeedbackQuestionModule,
     FeedbackResultModule,
     GroupRankModule,
+    RuleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

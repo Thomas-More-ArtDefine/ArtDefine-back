@@ -1,7 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
 import { User } from '../entities/user.entity';
-import { IsEmail, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsObject, IsString } from 'class-validator';
+import { Rule } from 'src/rule/entities/rule.entity';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsString()
@@ -20,5 +21,8 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     user_pronouns: string;
     @IsString()
     user_subtitle: string;
+    @IsObject()
     following: User[];
+    @IsArray()
+    Rules: Rule[];
 }
