@@ -8,12 +8,12 @@ export class Post {
     @PrimaryGeneratedColumn()
     id: string;
 
+    @Column({ type: 'string', name: 'user_id' })
+    user_id: string;
+
     @ManyToOne(type => User, user => user.posts, { onDelete: "CASCADE" })
     @JoinColumn({name: 'user_id'})
     user: User;
-
-    @Column({ type: 'string', name: 'user_id' })
-    user_id: string;
 
     @Column({ type: 'text' })
     post_content: string;

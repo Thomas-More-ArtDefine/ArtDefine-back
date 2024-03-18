@@ -28,7 +28,7 @@ export class GroupMember {
     @Column({ type: 'uuid', name: 'grouprank_id', default: null })
     grouprank_id: string;
 
-    @OneToOne(type => GroupRank, rank => rank.group_member, {cascade: true})
+    @OneToOne(type => GroupRank, rank => rank.group_member)
     @JoinColumn({name: 'grouprank_id'})
     rank: GroupRank
 }

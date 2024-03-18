@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
 
 @Injectable()
 export class UsersService {
@@ -81,7 +82,22 @@ export class UsersService {
   }
 
   async removeUser(id: string) {
-    return await this.usersRepository.delete(id);
+    let deleteUser: User = await this.usersRepository.findOne({
+      relations: {
+        received_messages: true,
+        send_messages: true,
+      },
+      where: {
+        id: id,
+    }
+  }); 
+
+  deleteUser.received_messages = [];
+  deleteUser.send_messages = [];
+
+  await this.usersRepository.save(deleteUser);
+
+    return await this.usersRepository.delete(id);;
   }
 }
 

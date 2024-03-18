@@ -20,7 +20,7 @@ export class GroupRank {
     @Column({ type: 'uuid', default: null })
     groupmember_id: string;
 
-    @OneToOne(type => GroupMember, group_member => group_member.rank, {onDelete: "CASCADE"})
+    @OneToOne(type => GroupMember, group_member => group_member.rank)
     @JoinColumn({name: 'groupmember_id'})
     group_member: GroupMember;
 

@@ -16,6 +16,9 @@ export class Group {
     @Column({ type: 'uuid', name: 'creator_id' })
     creator_id: string;
 
+    @Column({ type: 'varchar', length: 50, default: "" })
+    creator_name: string;
+
     @ManyToOne(type => User, user => user.made_groups)
     @JoinColumn({name: 'creator_id'})
     creator: User;

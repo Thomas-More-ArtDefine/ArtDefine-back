@@ -28,7 +28,7 @@ export class GroupMembersService {
 
   async updateGroupMember(id: string, updateGroupMemberDto: UpdateGroupMemberDto) {
     let updateMember: GroupMember = await this.groupMembersRepository.findOneBy({ id });
-    updateMember.rank = updateGroupMemberDto.rank;
+    // updateMember.rank = updateGroupMemberDto.rank;
     this.groupMembersRepository.save(updateMember);
     return updateMember;
   }

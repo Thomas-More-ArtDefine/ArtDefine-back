@@ -49,10 +49,10 @@ export class User {
   @OneToMany(type => GroupMember, groupMember => groupMember.member, {onDelete:'CASCADE'})
   groups: [];
 
-  @OneToMany(type => Directmessage, directmessage => directmessage.sender)
+  @OneToMany(type => Directmessage, directmessage => directmessage.sender, {cascade: true})
   send_messages: [];
 
-  @OneToMany(type => Directmessage, directmessage => directmessage.receiver)
+  @OneToMany(type => Directmessage, directmessage => directmessage.receiver, {cascade: true})
   received_messages: [];
 
   @OneToMany(type => Link, link => link.user, {onDelete:'CASCADE'})
