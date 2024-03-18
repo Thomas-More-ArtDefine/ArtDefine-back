@@ -9,6 +9,6 @@ export class CreateGroupMemberDto {
     member: User;
     @IsObject()
     group: Group;
-    @IsObject()
-    rank: GroupRank;
+    // @IsObject()
+    // rank: GroupRank;
 }

@@ -9,5 +9,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [GroupMembersController],
   providers: [GroupMembersService],
   imports: [TypeOrmModule.forFeature([GroupMember])],
+  exports: [GroupMembersService]
 })
 export class GroupMembersModule {}

@@ -6,18 +6,37 @@ import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { User } from 'src/users/entities/user.entity';
 import { GroupMember } from 'src/group_members/entities/group_member.entity';
+import { UsersService } from 'src/users/users.service';
+import { GroupMembersService } from 'src/group_members/group_members.service';
+import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.dto';
 
 @Injectable()
 export class GroupsService {
   constructor(
     @InjectRepository(Group)
     private readonly groupsRepository: Repository<Group>,
+    private readonly usersService: UsersService,
+    private readonly groupMembersService: GroupMembersService
   ) {}
 
-  //add a way to make creator directly a member
-  createGroup(createGroupDto: CreateGroupDto) {
-    this.groupsRepository.save(createGroupDto);
-    return createGroupDto;
+  async createGroup(createGroupDto: CreateGroupDto) {
+    const creator: User = await this.usersService.findOneUser(createGroupDto.creator_id);
+    let newGroup: Group = new Group();
+    newGroup.group_name = createGroupDto.group_name;
+    newGroup.creator_id = createGroupDto.creator_id;
+    newGroup.group_userlimit = createGroupDto.group_userlimit;
+    newGroup.creator_name = creator.user_name;
+    await this.groupsRepository.save(newGroup);
+
+    // make owner group member
+    let createGroupMemberDto: CreateGroupMemberDto = new CreateGroupMemberDto();
+    createGroupMemberDto.member = creator;
+    createGroupMemberDto.group = await this.groupsRepository.findOne({
+      where: {
+        group_name: newGroup.group_name,
+    }});
+    this.groupMembersService.createGroupMember(createGroupMemberDto);
+    return newGroup; 
   }
 
   async findAllGroups() {
@@ -27,14 +46,12 @@ export class GroupsService {
   async findOneGroup(id: string) {
     let group: Group = await this.groupsRepository.findOne({
       relations: {
-        creator: true,
         links: true
       },
       where: {
         id: id,
       }
     });
-    group.creator = getBasicUserInfo(group.creator);
     return group;
   }
 

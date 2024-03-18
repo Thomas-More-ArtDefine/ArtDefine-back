@@ -1,5 +1,4 @@
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
-import { Group } from 'src/groups/entities/group.entity';
 import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany } from 'typeorm';
@@ -42,9 +41,6 @@ export class User {
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
   posts: []; 
-
-  @OneToMany(type => Group, group => group.creator)
-  made_groups: [];
 
   @OneToMany(type => GroupMember, groupMember => groupMember.member, {onDelete:'CASCADE'})
   groups: [];

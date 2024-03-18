@@ -17,12 +17,12 @@ export class GroupRank {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @Column({ type: 'uuid', default: null })
-    groupmember_id: string;
+    // @Column({ type: 'uuid', default: null })
+    // groupmember_id: string;
 
-    @OneToOne(type => GroupMember, group_member => group_member.rank)
-    @JoinColumn({name: 'groupmember_id'})
-    group_member: GroupMember;
+    // @OneToOne(type => GroupMember, group_member => group_member.rank)
+    // @JoinColumn({name: 'groupmember_id'})
+    // group_member: GroupMember;
 
     @Column({
         type: "enum",
