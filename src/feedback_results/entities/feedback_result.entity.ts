@@ -10,10 +10,10 @@ export class FeedbackResult {
     @Column({ type: 'json' })
     feedback_result: JSON;
 
-    @Column({ type: 'uuid', default: null })
+    @Column({ type: 'uuid', default: null, nullable: true })
     user_id: string;
 
-    @ManyToOne(type => User, user => user.given_feedback)
+    @ManyToOne(type => User, user => user.given_feedback, {onDelete:'SET NULL'})
     @JoinColumn({name: 'user_id'})
     user: User;
 

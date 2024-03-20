@@ -13,8 +13,7 @@ export class FeedbackResultsService {
   ) {}
 
   createFeedback(createFeedbackResultDto: CreateFeedbackResultDto) {
-    this.feedbackRepository.save(createFeedbackResultDto);
-    return 'This action adds a new feedbackResult';
+    return this.feedbackRepository.save(createFeedbackResultDto);
   }
 
   findAllFeedback() {
