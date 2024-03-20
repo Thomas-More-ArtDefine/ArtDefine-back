@@ -10,6 +10,8 @@ import { UsersService } from 'src/users/users.service';
 import { GroupMembersService } from 'src/group_members/group_members.service';
 import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.dto';
 import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
+import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
+import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
 
 @Injectable()
 export class GroupsService {
@@ -30,18 +32,31 @@ export class GroupsService {
     newGroup.creator_name = creator.user_name;
     await this.groupsRepository.save(newGroup);
 
+    let savedGroup: Group = await this.groupsRepository.findOne({
+      where: {
+        group_name: newGroup.group_name,
+    },
+    order: { id: 'DESC' }});
+
     // make default group ranks: Owner, Member
-    
+    let createDefaultRankDto: CreateGroupRankDto = new CreateGroupRankDto();
+    createDefaultRankDto.default_rank = true;
+    createDefaultRankDto.group = savedGroup;
+    createDefaultRankDto.rank = group_rank.MEMBER;
+    await this.groupranksService.createMemberRank(createDefaultRankDto);
+
+    let createOwnerRankDto: CreateGroupRankDto = new CreateGroupRankDto();
+    createOwnerRankDto.default_rank = false;
+    createOwnerRankDto.group = savedGroup;
+    createOwnerRankDto.rank = group_rank.OWNER;
+    await this.groupranksService.createMemberRank(createOwnerRankDto);
 
     // make owner group member
     let createGroupMemberDto: CreateGroupMemberDto = new CreateGroupMemberDto();
     createGroupMemberDto.member = creator;
-    createGroupMemberDto.group = await this.groupsRepository.findOne({
-      where: {
-        group_name: newGroup.group_name,
-    }});
-    this.groupMembersService.createGroupMember(createGroupMemberDto);
-    return newGroup; 
+    createGroupMemberDto.group = savedGroup;
+    await this.groupMembersService.createGroupOwner(createGroupMemberDto);
+    return savedGroup; 
   }
 
   async findAllGroups() {

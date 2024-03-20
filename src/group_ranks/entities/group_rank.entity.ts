@@ -30,7 +30,7 @@ export class GroupRank {
     @Column({
         type: "enum",
         enum: group_rank,
-        default: group_rank.GUEST
+        default: group_rank.MEMBER
     })
     rank: group_rank;
 

@@ -12,14 +12,32 @@ export class GroupRanksService {
     private readonly groupRanksRepository: Repository<GroupRank>,
   ) {}
 
-  createMemberRank(createGroupRankDto: CreateGroupRankDto) {
-    this.groupRanksRepository.save(createGroupRankDto);
+  async createMemberRank(createGroupRankDto: CreateGroupRankDto) {
+    await this.groupRanksRepository.save(createGroupRankDto);
     return createGroupRankDto;
   }
 
   findAllMemberRanks() {
     return this.groupRanksRepository.find();
   }
+
+  findAllMemberRanksOfGroup(id: string) {
+    return this.groupRanksRepository.find({
+      where: {
+        group_id: id,
+      }
+    });
+  }
+
+  findDefaultMemberRankOfGroup(id: string) {
+    return this.groupRanksRepository.findOne({
+      where: {
+        group_id: id,
+        default_rank: true
+      }
+    });
+  }
+
 
   findOneMemberRank(id: string) {
     return this.groupRanksRepository.findOneBy({ id });
@@ -32,6 +50,7 @@ export class GroupRanksService {
     // set new default rank for group
     if ((updateRank.default_rank != updateGroupRankDto.default_rank) && (updateGroupRankDto.default_rank === true)) {
       let ranks_in_group: GroupRank[] = await this.groupRanksRepository.find({ where: {group_id: updateRank.group_id,}})
+      // find previous default rank and save it as a non default rank
       ranks_in_group.forEach( function(rank){
         if (rank.default_rank === true) {
           rank.default_rank = false;
