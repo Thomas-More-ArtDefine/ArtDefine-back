@@ -41,7 +41,7 @@ export class UsersController {
     return this.usersService.deactivateUser(id);
   }
 
-  @Patch('deactivate/:id')
+  @Patch('activate/:id')
   activate(@Param('id') id: string) {
     return this.usersService.activateUser(id);
   }

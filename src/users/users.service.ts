@@ -139,6 +139,8 @@ function getBasicUserInfo(user:User):User{
     cleanedUser.user_name = user.user_name;
     cleanedUser.user_subtitle = user.user_subtitle;
     cleanedUser.user_profile_picture = user.user_profile_picture;
+    cleanedUser.user_deactivated = user.user_deactivated;
+    cleanedUser.user_deactivation_date = user.user_deactivation_date;
     return cleanedUser;
   }
 
@@ -153,6 +155,8 @@ function getBasicUserInfo(user:User):User{
     cleanedUser.user_banner_picture = user.user_banner_picture;
     cleanedUser.user_creationdate = user.user_creationdate;
     cleanedUser.links = user.links;
+    cleanedUser.user_deactivated = user.user_deactivated;
+    cleanedUser.user_deactivation_date = user.user_deactivation_date;
     return cleanedUser;
   }
 
