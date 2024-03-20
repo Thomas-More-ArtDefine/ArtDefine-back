@@ -30,7 +30,7 @@ export class Post {
     @Column({ type: 'date', default: new Date()  })
     post_uploaddate: Date;
 
-    @ManyToMany(type => Folder, folder => folder.posts)
+    @ManyToMany(type => Folder, folder => folder.posts, {onDelete:'CASCADE'})
     folders: Folder[]
 
     @OneToOne(type => FeedbackTemplate, template => template.post, {cascade: true})
