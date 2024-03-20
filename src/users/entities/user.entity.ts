@@ -39,6 +39,12 @@ export class User {
   @Column({ type: 'date', default: new Date()  })
   user_creationdate: Date;
 
+  @Column({ type: 'bool', default: false  })
+  user_deactivated: boolean;
+
+  @Column({ type: 'date', default: null  })
+  user_deactivation_date: Date;
+
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
   posts: []; 
 
