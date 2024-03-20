@@ -9,6 +9,7 @@ import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { UsersService } from 'src/users/users.service';
 import { GroupMembersService } from 'src/group_members/group_members.service';
 import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.dto';
+import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
 
 @Injectable()
 export class GroupsService {
@@ -16,7 +17,8 @@ export class GroupsService {
     @InjectRepository(Group)
     private readonly groupsRepository: Repository<Group>,
     private readonly usersService: UsersService,
-    private readonly groupMembersService: GroupMembersService
+    private readonly groupMembersService: GroupMembersService,
+    private readonly groupranksService: GroupRanksService
   ) {}
 
   async createGroup(createGroupDto: CreateGroupDto) {
@@ -27,6 +29,9 @@ export class GroupsService {
     newGroup.group_userlimit = createGroupDto.group_userlimit;
     newGroup.creator_name = creator.user_name;
     await this.groupsRepository.save(newGroup);
+
+    // make default group ranks: Owner, Member
+    
 
     // make owner group member
     let createGroupMemberDto: CreateGroupMemberDto = new CreateGroupMemberDto();

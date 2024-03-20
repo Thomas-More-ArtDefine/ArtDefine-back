@@ -1,5 +1,6 @@
 import { Folder } from 'src/folders/entities/folder.entity';
 import { GroupMember } from 'src/group_members/entities/group_member.entity';
+import { GroupRank } from 'src/group_ranks/entities/group_rank.entity';
 import { Link } from 'src/links/entities/link.entity';
 import { Rule } from 'src/rules/entities/rule.entity';
 import { User } from 'src/users/entities/user.entity';
@@ -52,5 +53,8 @@ export class Group {
     @ManyToMany(type => Rule, {onDelete: "CASCADE"})
     @JoinTable()
     Rules: Rule[];
+
+    @OneToMany(type => GroupRank, rank => rank.group, {onDelete: "CASCADE"})
+    ranks: GroupRank[];
 }
 

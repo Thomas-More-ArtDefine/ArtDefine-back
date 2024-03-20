@@ -1,10 +1,12 @@
-import { GroupMember } from "src/group_members/entities/group_member.entity";
 import { group_rank } from "../entities/group_rank.entity";
-import { IsEnum, IsObject } from "class-validator";
+import { IsBoolean, IsEnum, IsObject } from "class-validator";
+import { Group } from "src/groups/entities/group.entity";
 
 export class CreateGroupRankDto {
     @IsObject()
-    group_member: GroupMember;
+    group: Group;
     @IsEnum(group_rank)
     rank: group_rank;
+    @IsBoolean()
+    default_rank: boolean;
 }

@@ -25,10 +25,10 @@ export class GroupMember {
     @Column({ type: 'date', default: new Date()  })
     member_join_date: Date;
 
-    // @Column({ type: 'uuid', name: 'grouprank_id', default: null })
-    // grouprank_id: string;
+    @Column({ type: 'uuid', name: 'grouprank_id', default: null })
+    grouprank_id: string;
 
-    // @OneToOne(type => GroupRank, rank => rank.group_member)
-    // @JoinColumn({name: 'grouprank_id'})
-    // rank: GroupRank
+    @ManyToOne(type => GroupRank, rank => rank.group_members)
+    @JoinColumn({name: 'grouprank_id'})
+    rank: GroupRank
 }

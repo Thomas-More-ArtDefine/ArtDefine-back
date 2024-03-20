@@ -1,8 +1,8 @@
 import { GroupMember } from 'src/group_members/entities/group_member.entity';
+import { Group } from 'src/groups/entities/group.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 
 export enum group_rank {
-    CREATOR = "creator",
     OWNER = "owner",
     ADMIN = "admin",
     MODERATOR = "moderator",
@@ -17,12 +17,15 @@ export class GroupRank {
     @PrimaryGeneratedColumn()
     id: string;
 
-    // @Column({ type: 'uuid', default: null })
-    // groupmember_id: string;
+    @OneToMany(type => GroupMember, groupMember => groupMember.rank)
+    group_members: [];
 
-    // @OneToOne(type => GroupMember, group_member => group_member.rank)
-    // @JoinColumn({name: 'groupmember_id'})
-    // group_member: GroupMember;
+    @Column({ type: 'uuid', name: 'group_id' })
+    group_id: string;
+
+    @ManyToOne(type => Group, group => group.ranks)
+    @JoinColumn({name: 'group_id'})
+    group: Group
 
     @Column({
         type: "enum",
@@ -30,5 +33,8 @@ export class GroupRank {
         default: group_rank.GUEST
     })
     rank: group_rank;
+
+    @Column({ type: 'bool', default: false })
+    default_rank: boolean;
 
 }

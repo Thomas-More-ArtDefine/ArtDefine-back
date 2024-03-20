@@ -8,5 +8,6 @@ import { GroupRank } from './entities/group_rank.entity';
   controllers: [GroupRanksController],
   providers: [GroupRanksService],
   imports: [TypeOrmModule.forFeature([GroupRank])],
+  exports: [GroupRanksService]
 })
 export class GroupRanksModule {}
