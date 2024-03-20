@@ -25,6 +25,4 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     following: User[];
     @IsArray()
     Rules: Rule[];
-    @IsBoolean()
-    user_deactivated: boolean;
 }

@@ -81,6 +81,28 @@ export class UsersService {
     return updateUser;
   }
 
+  async deactivateUser(id: string){
+    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
+    if (updateUser.user_deactivated != true) {
+      updateUser.user_deactivated = true;
+      updateUser.user_deactivation_date = new Date();
+      return this.usersRepository.save(updateUser);
+    }else{
+      return "User [" + id + "] is already deactivated.";
+    }
+  }
+
+  async activateUser(id: string){
+    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
+    if (updateUser.user_deactivated != true) {
+      return "User [" + id + "] is already active.";
+    }else{
+      updateUser.user_deactivated = false;
+      updateUser.user_deactivation_date = null;
+      return this.usersRepository.save(updateUser);
+    }
+  }
+
   async removeUser(id: string) {
     let deleteUser: User = await this.usersRepository.findOne({
       relations: {

@@ -36,6 +36,16 @@ export class UsersController {
     return this.usersService.updateUser(id, updateUserDto);
   }
 
+  @Patch('deactivate/:id')
+  deactivate(@Param('id') id: string) {
+    return this.usersService.deactivateUser(id);
+  }
+
+  @Patch('deactivate/:id')
+  activate(@Param('id') id: string) {
+    return this.usersService.activateUser(id);
+  }
+
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.removeUser(id);
