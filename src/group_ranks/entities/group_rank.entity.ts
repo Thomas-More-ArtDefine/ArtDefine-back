@@ -23,7 +23,7 @@ export class GroupRank {
     @Column({ type: 'uuid', name: 'group_id' })
     group_id: string;
 
-    @ManyToOne(type => Group, group => group.ranks)
+    @ManyToOne(type => Group, group => group.ranks, {onDelete: "CASCADE"})
     @JoinColumn({name: 'group_id'})
     group: Group
 
@@ -35,6 +35,6 @@ export class GroupRank {
     rank: group_rank;
 
     @Column({ type: 'bool', default: false })
-    default_rank: boolean;
+    default_rank: boolean; 
 
 }

@@ -3,8 +3,7 @@ import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { GroupRank } from 'src/group_ranks/entities/group_rank.entity';
 import { Link } from 'src/links/entities/link.entity';
 import { Rule } from 'src/rules/entities/rule.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()
 export class Group {
@@ -54,7 +53,7 @@ export class Group {
     // @JoinTable()
     // Rules: Rule[];
 
-    @OneToMany(type => Rule, rule => rule.group)
+    @OneToMany(type => Rule, rule => rule.group, {onDelete: "CASCADE"})
     rules: Rule[];
 
     @OneToMany(type => GroupRank, rank => rank.group, {onDelete: "CASCADE"})

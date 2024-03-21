@@ -18,7 +18,7 @@ export class GroupMember {
     @Column({ type: 'uuid', name: 'group_id' })
     group_id: string;
 
-    @ManyToOne(type => Group, group => group.members)
+    @ManyToOne(type => Group, group => group.members, {onDelete: "CASCADE"})
     @JoinColumn({name: 'group_id'})
     group: Group;
 
