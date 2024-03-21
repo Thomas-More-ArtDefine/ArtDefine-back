@@ -20,7 +20,7 @@ export class FeedbackResult {
     @Column({ type: 'uuid', default: null })
     template_id: string;
 
-    @ManyToOne(type => FeedbackTemplate, template => template.feedback)
+    @ManyToOne(type => FeedbackTemplate, template => template.feedback, {onDelete:'CASCADE'})
     @JoinColumn({name: 'template_id'})
     template: FeedbackTemplate;
 }
