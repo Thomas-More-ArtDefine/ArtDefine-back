@@ -56,7 +56,7 @@ export class Group {
     @OneToMany(type => Rule, rule => rule.group, {onDelete: "CASCADE"})
     rules: Rule[];
 
-    @OneToMany(type => GroupRank, rank => rank.group, {onDelete: "CASCADE"})
+    @OneToMany(type => GroupRank, rank => rank.group)
     ranks: GroupRank[];
 }
 
