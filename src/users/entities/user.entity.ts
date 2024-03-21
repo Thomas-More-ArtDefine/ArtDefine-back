@@ -70,8 +70,11 @@ export class User {
   @JoinTable()
   following: User[]
 
-  @ManyToMany(type => Rule, {onDelete: "CASCADE"})
-  @JoinTable()
-  Rules: [];
+  @OneToMany(type => Rule, rule => rule.user)
+  rules: Rule[];
+
+  // @ManyToMany(type => Rule, {onDelete: "CASCADE"})
+  // @JoinTable()
+  // Rules: [];
 
 }

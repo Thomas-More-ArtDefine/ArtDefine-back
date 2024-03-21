@@ -50,9 +50,12 @@ export class Group {
     @OneToMany(type => Folder, folder => folder.group, {onDelete: "CASCADE"})
     folders: Folder[];
 
-    @ManyToMany(type => Rule, {onDelete: "CASCADE"})
-    @JoinTable()
-    Rules: Rule[];
+    // @ManyToMany(type => Rule, {onDelete: "CASCADE"})
+    // @JoinTable()
+    // Rules: Rule[];
+
+    @OneToMany(type => Rule, rule => rule.group)
+    rules: Rule[];
 
     @OneToMany(type => GroupRank, rank => rank.group, {onDelete: "CASCADE"})
     ranks: GroupRank[];

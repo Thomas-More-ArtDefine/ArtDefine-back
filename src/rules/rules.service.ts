@@ -13,8 +13,14 @@ export class RulesService {
   ) {}
 
   createRule(createRuleDto: CreateRuleDto) {
-    this.rulesRepository.save(createRuleDto);
-    return createRuleDto;
+    if ((createRuleDto.user != null) && (createRuleDto.group != null)) {
+      return 'Rule can only have one owner';
+    }else if ((createRuleDto.user === null) && (createRuleDto.group === null)) {
+      return 'Rule needs an owner';
+    }else{
+      this.rulesRepository.save(createRuleDto);
+      return 'New rule succesfully created.' + createRuleDto;
+    }
   }
 
   findAllRules() {
