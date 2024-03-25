@@ -103,6 +103,13 @@ export class UsersService {
     }
   }
 
+  async saveProfilePicture(file: Express.Multer.File,id: string) {
+    let user: User = await this.usersRepository.findOneBy({ id }); 
+    user.user_profile_picture = "exampleurl/"+file.originalname;
+
+    return this.usersRepository.save(user);
+  }
+
   async removeUser(id: string) {
     let deleteUser: User = await this.usersRepository.findOne({
       relations: {
