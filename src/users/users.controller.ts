@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -53,12 +53,20 @@ export class UsersController {
   }
 
   
-  @Post(':id/profile-picture-upload')
+  @Post(':id/profile-images-upload')
   @UseInterceptors(FileInterceptor('file'),)
-  // TODO: validate file is png or jpg
   // TODO: save file to cloud
-    uploadFile(@Param('id') id: string, @UploadedFile() file: Express.Multer.File) {
-      this.usersService.saveProfilePicture(file,id);
+  uploadFile(
+    @Param('id') id: string, 
+    @UploadedFile(
+    new ParseFilePipe({
+      validators: [
+        new MaxFileSizeValidator({ maxSize: 500000 }), // max file size of 500 kb
+        new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }), // only upload png and jpeg images
+      ]
+    })
+  ) file: Express.Multer.File) {
+    this.usersService.saveProfilePicture(file,id);
     return file;
   }
 }

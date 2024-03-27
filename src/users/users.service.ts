@@ -105,7 +105,7 @@ export class UsersService {
 
   async saveProfilePicture(file: Express.Multer.File,id: string) {
     let user: User = await this.usersRepository.findOneBy({ id }); 
-    user.user_profile_picture = "exampleurl/"+file.originalname;
+    user.user_profile_picture = "[replace with cloud url or local path]/"+file.originalname;
 
     return this.usersRepository.save(user);
   }
