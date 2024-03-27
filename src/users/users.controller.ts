@@ -1,8 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { FileInterceptor } from '@nestjs/platform-express/multer';
+import { FileFieldsInterceptor } from '@nestjs/platform-express/multer';
+import { ProfileFilesSizeValidationPipe } from './validation_pipes/ProfileFilesSizeValidationPipe';
+import { ProfileFilesTypesValidationPipe } from './validation_pipes/ProfileFilesTypesValidationPipe';
 
 @Controller('users')
 export class UsersController {
@@ -54,19 +56,18 @@ export class UsersController {
 
   
   @Post(':id/profile-images-upload')
-  @UseInterceptors(FileInterceptor('file'),)
-  // TODO: save file to cloud
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'profile_picture', maxCount: 1 },
+    { name: 'banner_picture', maxCount: 1 },
+  ]))
+  // TODO: save files to cloud
   uploadFile(
     @Param('id') id: string, 
-    @UploadedFile(
-    new ParseFilePipe({
-      validators: [
-        new MaxFileSizeValidator({ maxSize: 500000 }), // max file size of 500 kb
-        new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }), // only upload png and jpeg images
-      ]
-    })
-  ) file: Express.Multer.File) {
-    this.usersService.saveProfilePicture(file,id);
-    return file;
+    @UploadedFiles(
+      ProfileFilesSizeValidationPipe,
+      ProfileFilesTypesValidationPipe
+  ) files:  { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] }) {
+    this.usersService.saveProfilePicture(files,id);
+    return files;
   }
 }

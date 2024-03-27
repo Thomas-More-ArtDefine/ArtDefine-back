@@ -103,10 +103,15 @@ export class UsersService {
     }
   }
 
-  async saveProfilePicture(file: Express.Multer.File,id: string) {
+  async saveProfilePicture(files: { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] },id: string) {
     let user: User = await this.usersRepository.findOneBy({ id }); 
-    user.user_profile_picture = "[replace with cloud url or local path]/"+file.originalname;
-
+    if (files.profile_picture != undefined) {
+      user.user_profile_picture = "[replace with cloud url or local path]/"+files.profile_picture[0].originalname;
+    }
+    if (files.banner_picture != undefined) {
+      user.user_banner_picture = "[replace with cloud url or local path]/"+files.banner_picture[0].originalname;
+    }
+    
     return this.usersRepository.save(user);
   }
 
