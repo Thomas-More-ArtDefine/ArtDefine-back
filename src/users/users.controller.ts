@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { FileFieldsInterceptor } from '@nestjs/platform-express/multer';
+import { ProfileFilesSizeValidationPipe } from './validation_pipes/ProfileFilesSizeValidationPipe';
+import { ProfileFilesTypesValidationPipe } from './validation_pipes/ProfileFilesTypesValidationPipe';
 
 @Controller('users')
 export class UsersController {
@@ -49,5 +52,22 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.removeUser(id);
+  }
+
+  
+  @Post(':id/profile-images-upload')
+  @UseInterceptors(FileFieldsInterceptor([
+    { name: 'profile_picture', maxCount: 1 },
+    { name: 'banner_picture', maxCount: 1 },
+  ]))
+  // TODO: save files to cloud
+  uploadFile(
+    @Param('id') id: string, 
+    @UploadedFiles(
+      ProfileFilesSizeValidationPipe,
+      ProfileFilesTypesValidationPipe
+  ) files:  { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] }) {
+    this.usersService.saveProfilePicture(files,id);
+    return files;
   }
 }
