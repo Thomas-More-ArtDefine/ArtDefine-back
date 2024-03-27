@@ -4,27 +4,29 @@ import { User } from '../entities/user.entity';
 import { IsArray, IsBoolean, IsEmail, IsEmpty, IsObject, IsString } from 'class-validator';
 import { Rule } from 'src/rules/entities/rule.entity';
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-    @IsString()
+export class UpdateGeneralInfoDto extends PartialType(CreateUserDto) {
+    @IsEmpty()
     user_name: string;
-    @IsEmail()
+    @IsEmpty()
     user_email: string;
-    @IsString()
+    @IsEmpty()
     user_password: string;
-    @IsString()
-    user_bio: string;
-    @IsString()
+    @IsEmpty()
     user_profile_picture: string;
-    @IsString()
+    @IsEmpty()
     user_banner_picture: string;
+    @IsEmpty()
+    following: User[];
+    @IsEmpty()
+    Rules: Rule[];
+
+    //Affected in this endpoint
     @IsString()
     user_pronouns: string;
     @IsString()
     user_subtitle: string;
-    @IsObject()
-    following: User[];
-    @IsArray()
-    Rules: Rule[];
+    @IsString()
+    user_bio: string;
 
     //Affected by other resources, should always be empty
     @IsEmpty()

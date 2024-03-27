@@ -5,26 +5,28 @@ import { IsArray, IsBoolean, IsEmail, IsEmpty, IsObject, IsString } from 'class-
 import { Rule } from 'src/rules/entities/rule.entity';
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-    @IsString()
+    @IsEmpty()
     user_name: string;
-    @IsEmail()
+    @IsEmpty()
     user_email: string;
-    @IsString()
+    @IsEmpty()
     user_password: string;
-    @IsString()
+    @IsEmpty()
     user_bio: string;
-    @IsString()
+    @IsEmpty()
     user_profile_picture: string;
-    @IsString()
+    @IsEmpty()
     user_banner_picture: string;
-    @IsString()
+    @IsEmpty()
     user_pronouns: string;
-    @IsString()
+    @IsEmpty()
     user_subtitle: string;
+    @IsEmpty()
+    Rules: Rule[];
+
+    //Affected in this endpoint
     @IsObject()
     following: User[];
-    @IsArray()
-    Rules: Rule[];
 
     //Affected by other resources, should always be empty
     @IsEmpty()

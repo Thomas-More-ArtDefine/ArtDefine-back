@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
+import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 
 @Injectable()
 export class UsersService {
@@ -64,21 +65,41 @@ export class UsersService {
     );
   }
 
-  async updateUser(id: string, updateUserDto: UpdateUserDto) {
+  // async updateUser(id: string, updateUserDto: UpdateUserDto) {
+  //   let updateUser: User = await this.usersRepository.findOneBy({ id }); 
+    
+  //   updateUser.user_name = updateUserDto.user_name;
+  //   updateUser.user_email = updateUserDto.user_email;
+  //   updateUser.user_password = updateUserDto.user_password;
+  //   updateUser.user_bio = updateUserDto.user_bio;
+  //   updateUser.user_profile_picture = updateUserDto.user_profile_picture;
+  //   updateUser.user_banner_picture = updateUserDto.user_banner_picture;
+  //   updateUser.user_subtitle = updateUserDto.user_subtitle;
+  //   updateUser.user_pronouns = updateUserDto.user_pronouns;
+  //   updateUser.following = updateUserDto.following;
+
+  //   this.usersRepository.save(updateUser);
+  //   return updateUser;
+  // }
+
+  async updateFollowing(id: string, updateUserDto: UpdateUserDto) {
     let updateUser: User = await this.usersRepository.findOneBy({ id }); 
     
-    updateUser.user_name = updateUserDto.user_name;
-    updateUser.user_email = updateUserDto.user_email;
-    updateUser.user_password = updateUserDto.user_password;
-    updateUser.user_bio = updateUserDto.user_bio;
-    updateUser.user_profile_picture = updateUserDto.user_profile_picture;
-    updateUser.user_banner_picture = updateUserDto.user_banner_picture;
-    updateUser.user_subtitle = updateUserDto.user_subtitle;
-    updateUser.user_pronouns = updateUserDto.user_pronouns;
     updateUser.following = updateUserDto.following;
 
     this.usersRepository.save(updateUser);
-    return updateUser;
+    return getBasicUserInfo(updateUser);
+  }
+
+  async updateGeneralInfo(id: string, updateGeneralInfoDto: UpdateGeneralInfoDto) {
+    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
+    
+    updateUser.user_bio = updateGeneralInfoDto.user_bio;
+    updateUser.user_subtitle = updateGeneralInfoDto.user_subtitle;
+    updateUser.user_pronouns = updateGeneralInfoDto.user_pronouns;
+
+    this.usersRepository.save(updateUser);
+    return getBasicUserInfo(updateUser);
   }
 
   async deactivateUser(id: string){

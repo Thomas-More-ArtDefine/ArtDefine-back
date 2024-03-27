@@ -5,6 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express/multer';
 import { ProfileFilesSizeValidationPipe } from './validation_pipes/ProfileFilesSizeValidationPipe';
 import { ProfileFilesTypesValidationPipe } from './validation_pipes/ProfileFilesTypesValidationPipe';
+import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 
 @Controller('users')
 export class UsersController {
@@ -34,9 +35,19 @@ export class UsersController {
     return this.usersService.findAllFollowers(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateUser(id, updateUserDto);
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+  //   return this.usersService.updateUser(id, updateUserDto);
+  // }
+
+  @Patch('general-info/:id')
+  updateGeneralInfo(@Param('id') id: string, @Body() updateGeneralInfoDto: UpdateGeneralInfoDto) {
+    return this.usersService.updateGeneralInfo(id, updateGeneralInfoDto);
+  }
+
+  @Patch('follow/:id')
+  follow(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateFollowing(id, updateUserDto);
   }
 
   @Patch('deactivate/:id')
@@ -55,7 +66,7 @@ export class UsersController {
   }
 
   
-  @Post(':id/profile-images-upload')
+  @Post('profile-images-upload/:id')
   @UseInterceptors(FileFieldsInterceptor([
     { name: 'profile_picture', maxCount: 1 },
     { name: 'banner_picture', maxCount: 1 },
