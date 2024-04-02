@@ -22,8 +22,14 @@ describe('GroupMembersController', () => {
             findOne: jest.fn(),
             delete: jest.fn(),
           }
+        },
+        GroupRanksService,
+        {
+          provide: getRepositoryToken(GroupRank),
+          useValue: {
+            findOne: jest.fn()
+          },
         },],
-        imports:[GroupRanksModule],
     }).compile();
 
     controller = module.get<GroupMembersController>(GroupMembersController);
