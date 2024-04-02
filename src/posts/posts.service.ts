@@ -4,6 +4,8 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm/repository/Repository';
+import { visibility } from 'src/app.controller';
+
 
 @Injectable()
 export class PostsService {
@@ -17,8 +19,26 @@ export class PostsService {
     return createPostDto;
   }
 
-  findAllPosts(): Promise<Post[]> {
-    return this.postsRepository.find();
+  async findAllPosts(): Promise<Post[]> {
+    return await this.postsRepository.find();
+  }
+
+  async findRandomPosts(numberPosts: number): Promise<Post[]> {
+    const totalNumberPosts: number = await this.postsRepository.count();
+    let feedArray: Post[] = [];
+    let index = 0
+    for (let timeout = 0; index < numberPosts; timeout++) {
+      let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
+      let post:Post = await this.postsRepository.findOneBy({id});
+      if (post.post_visibility === visibility.PUBLIC) {
+        feedArray.push(post);
+        index++
+      }
+      if (timeout > 50) {
+        break;
+      }
+    }
+    return feedArray;
   }
 
   findAllByUserId(userid: string): Promise<Post[]> {

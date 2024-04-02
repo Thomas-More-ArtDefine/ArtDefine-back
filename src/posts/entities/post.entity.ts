@@ -2,6 +2,7 @@ import { FeedbackTemplate } from 'src/feedback_templates/entities/feedback_templ
 import { Folder } from 'src/folders/entities/folder.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn, ManyToMany, OneToOne } from 'typeorm';
+import { visibility } from 'src/app.controller';
 
 @Entity()
 export class Post {
@@ -26,6 +27,13 @@ export class Post {
 
     @Column({ type: 'text', default: "" })
     post_description: string;
+
+    @Column({
+        type: "enum",
+        enum: visibility,
+        default: visibility.PRIVATE
+    })
+    post_visibility: visibility;
 
     @Column({ type: 'date', default: new Date()  })
     post_uploaddate: Date;

@@ -17,6 +17,11 @@ export class PostsController {
     return this.postsService.findAllPosts();
   }
 
+  @Get('feed/random')
+  getRandomFeed() {
+    return this.postsService.findRandomPosts(10);
+  }
+
   @Get('user/:id')
   findByUserId(@Param('id') id: string) {
     return this.postsService.findAllByUserId(id);
