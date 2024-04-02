@@ -5,6 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm/repository/Repository';
 import { visibility } from 'src/app.controller';
+import { FoldersService } from 'src/folders/folders.service';
+import { Folder } from 'src/folders/entities/folder.entity';
+import { BeforeUpdate } from 'typeorm';
 
 
 @Injectable()
@@ -12,11 +15,35 @@ export class PostsService {
   constructor(
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
+    private readonly foldersService: FoldersService,
   ) {}
 
   async createPost(createPostDto: CreatePostDto) {
-    this.postsRepository.save(createPostDto);
-    return createPostDto;
+      createPostDto = await this.checkPostVisibility(createPostDto);
+    
+    console.log(createPostDto);
+    return await this.postsRepository.save(createPostDto);
+  }
+
+  async checkPostVisibility(post: CreatePostDto):Promise<CreatePostDto>{
+    var check:Promise<CreatePostDto> = new Promise((resolve, reject) => {
+        let index = 1;
+      post.folders.forEach(async (folderId) => {
+        console.log(index);
+        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+        // TODO: account for other visibility types
+        if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
+          post.post_visibility = visibility.PUBLIC;
+          resolve(post);
+        }else if(post.folders.length <= index){
+          resolve(post);
+        }else{
+          index++;
+        }}
+      )
+  });
+  console.log(post);
+  return check;
   }
 
   async findAllPosts(): Promise<Post[]> {

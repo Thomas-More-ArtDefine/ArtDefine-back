@@ -30,13 +30,9 @@ export class GroupsService {
     newGroup.creator_id = createGroupDto.creator_id;
     newGroup.group_userlimit = createGroupDto.group_userlimit;
     newGroup.creator_name = creator.user_name;
-    await this.groupsRepository.save(newGroup);
 
-    let savedGroup: Group = await this.groupsRepository.findOne({
-      where: {
-        group_name: newGroup.group_name,
-    },
-    order: { id: 'DESC' }});
+    let savedGroup: Group = await this.groupsRepository.save(newGroup);
+
 
     // make default group ranks: Owner, Member
     let createDefaultRankDto: CreateGroupRankDto = new CreateGroupRankDto();
