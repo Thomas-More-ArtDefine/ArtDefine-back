@@ -1,12 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PostsService } from './posts.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Post } from '@nestjs/common';
 
 describe('PostsService', () => {
   let service: PostsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [PostsService],
+      providers: [PostsService,
+        {
+          provide: getRepositoryToken(Post),
+          useValue: {
+            save: jest.fn(),
+            find: jest.fn(),
+            findOne: jest.fn(),
+            delete: jest.fn(),
+          }
+        },],
     }).compile();
 
     service = module.get<PostsService>(PostsService);

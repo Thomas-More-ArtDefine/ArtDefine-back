@@ -4,7 +4,7 @@ import { PipeTransform, Injectable, ArgumentMetadata } from '@nestjs/common';
 @Injectable()
 export class ProfileFilesTypesValidationPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
-    const fileTypes = ["image/png", "image/jpg", "image/jpeg"]; // 500 kb
+    const fileTypes = ["image/png", "image/jpg", "image/jpeg"];
 
     if (!fileTypes.includes(value.profile_picture[0].mimetype)) {
       return {

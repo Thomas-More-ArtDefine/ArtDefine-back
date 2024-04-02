@@ -78,7 +78,7 @@ export class UsersController {
       ProfileFilesSizeValidationPipe,
       ProfileFilesTypesValidationPipe
   ) files:  { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] }) {
-    this.usersService.saveProfilePicture(files,id);
+    this.usersService.saveProfileImages(files,id);
     return files;
   }
 }
