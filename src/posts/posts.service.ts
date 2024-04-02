@@ -33,6 +33,7 @@ export class PostsService {
           post.post_visibility = visibility.PUBLIC;
           resolve(post);
         }else if(post.folders.length <= index){
+          post.post_visibility = visibility.PRIVATE;
           resolve(post);
         }else{
           index++;
@@ -93,7 +94,6 @@ export class PostsService {
     updatePost.post_title = updatePostDto.post_title; 
     updatePost.post_visibility = updatePostDto.post_visibility; 
     this.postsRepository.save(updatePost);
-    console.log(updatePost);
     return updatePost;
   }
 
@@ -107,6 +107,7 @@ export class PostsService {
           post.post_visibility = visibility.PUBLIC;
           resolve(post);
         }else if(post.folders.length <= index){
+          post.post_visibility = visibility.PRIVATE;
           resolve(post);
         }else{
           index++;
