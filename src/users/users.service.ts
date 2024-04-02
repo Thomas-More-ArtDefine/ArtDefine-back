@@ -4,7 +4,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { Directmessage } from 'src/directmessages/entities/directmessage.entity';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 
 @Injectable()
@@ -124,7 +123,7 @@ export class UsersService {
     }
   }
 
-  async saveProfilePicture(files: { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] },id: string) {
+  async saveProfileImages(files: { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] },id: string) {
     let user: User = await this.usersRepository.findOneBy({ id }); 
     if (files.profile_picture != undefined) {
       user.user_profile_picture = "[replace with cloud url or local path]/"+files.profile_picture[0].originalname;
