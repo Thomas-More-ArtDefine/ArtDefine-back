@@ -7,7 +7,6 @@ import { Repository } from 'typeorm/repository/Repository';
 import { visibility } from 'src/app.controller';
 import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
-import { BeforeUpdate } from 'typeorm';
 
 
 @Injectable()
@@ -19,17 +18,15 @@ export class PostsService {
   ) {}
 
   async createPost(createPostDto: CreatePostDto) {
-      createPostDto = await this.checkPostVisibility(createPostDto);
+    createPostDto = await this.checkPostVisibilityUpload(createPostDto);
     
-    console.log(createPostDto);
     return await this.postsRepository.save(createPostDto);
   }
 
-  async checkPostVisibility(post: CreatePostDto):Promise<CreatePostDto>{
+  async checkPostVisibilityUpload(post: CreatePostDto):Promise<CreatePostDto>{
     var check:Promise<CreatePostDto> = new Promise((resolve, reject) => {
         let index = 1;
       post.folders.forEach(async (folderId) => {
-        console.log(index);
         let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
         // TODO: account for other visibility types
         if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
@@ -42,7 +39,6 @@ export class PostsService {
         }}
       )
   });
-  console.log(post);
   return check;
   }
 
@@ -90,12 +86,34 @@ export class PostsService {
   }
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
+    updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
     let updatePost: Post = await this.postsRepository.findOneBy({ id });
     updatePost.post_description = updatePostDto.post_description;
     updatePost.post_tags = updatePostDto.post_tags;
     updatePost.post_title = updatePostDto.post_title; 
+    updatePost.post_visibility = updatePostDto.post_visibility; 
     this.postsRepository.save(updatePost);
+    console.log(updatePost);
     return updatePost;
+  }
+
+  async checkPostVisibilityUpdate(post: UpdatePostDto):Promise<UpdatePostDto>{
+    var check:Promise<UpdatePostDto> = new Promise((resolve, reject) => {
+        let index = 1;
+      post.folders.forEach(async (folderId) => {
+        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+        // TODO: account for other visibility types
+        if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
+          post.post_visibility = visibility.PUBLIC;
+          resolve(post);
+        }else if(post.folders.length <= index){
+          resolve(post);
+        }else{
+          index++;
+        }}
+      )
+  });
+  return check;
   }
 
   async removePost(id: string) {
