@@ -1,8 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateFolderDto } from './create-folder.dto';
 import { IsBoolean, IsEnum, IsString } from 'class-validator';
-import { visibility } from '../entities/folder.entity';
-import { Post } from 'src/posts/entities/post.entity';
+import { visibility } from 'src/app.controller';
+
 
 export class UpdateFolderDto extends PartialType(CreateFolderDto) {
     @IsString()

@@ -2,13 +2,8 @@ import { Group } from 'src/groups/entities/group.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { visibility } from 'src/app.controller';
 
-export enum visibility {
-    PRIVATE = "private",
-    SELECTIVE = "selective",
-    LINK = "link",
-    PUBLIC = "public"
-}
 
 @Entity()
 export class Folder {

@@ -5,16 +5,21 @@ import { UpdatePostDto } from './dto/update-post.dto';
 
 @Controller('posts')
 export class PostsController {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(private readonly postsService: PostsService,) {}
 
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
+  async create(@Body() createPostDto: CreatePostDto) {
     return this.postsService.createPost(createPostDto);
   }
 
   @Get()
   findAll() {
     return this.postsService.findAllPosts();
+  }
+
+  @Get('feed/random')
+  getRandomFeed() {
+    return this.postsService.findRandomPosts(10);
   }
 
   @Get('user/:id')
