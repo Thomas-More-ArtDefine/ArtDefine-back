@@ -47,10 +47,14 @@ export class PostsService {
     return await this.postsRepository.find();
   }
 
-  async findRandomPosts(numberPosts: number): Promise<Post[]> {
+  async findRandomPosts(numberPosts: number, exclude?:string[]): Promise<Post[]> {
     const totalNumberPosts: number = await this.postsRepository.count();
     let feedArray: Post[] = [];
     let usedIds: string[] = [];
+    if (exclude != undefined) {
+      usedIds = exclude;
+      
+    }
     let index = 0
     for (let timeout = 0; index < numberPosts; timeout++) {
       let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
