@@ -50,16 +50,22 @@ export class PostsService {
   async findRandomPosts(numberPosts: number): Promise<Post[]> {
     const totalNumberPosts: number = await this.postsRepository.count();
     let feedArray: Post[] = [];
+    let usedIds: string[] = [];
     let index = 0
     for (let timeout = 0; index < numberPosts; timeout++) {
       let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
-      let post:Post = await this.postsRepository.findOneBy({id});
-      if (post.post_visibility === visibility.PUBLIC) {
-        feedArray.push(post);
-        index++
-      }
-      if (timeout > 50) {
-        break;
+      
+      if (!usedIds.includes(id)) {
+        usedIds.push(id);
+      
+        let post:Post = await this.postsRepository.findOneBy({id});
+        if (post.post_visibility === visibility.PUBLIC) {
+          feedArray.push(post);
+          index++
+        }
+        if (timeout > 50) {
+          break;
+        }
       }
     }
     return feedArray;
@@ -87,7 +93,10 @@ export class PostsService {
   }
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
-    updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
+    if (updatePostDto.folders != undefined) {
+      updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
+    }
+    
     let updatePost: Post = await this.postsRepository.findOneBy({ id });
     updatePost.post_description = updatePostDto.post_description;
     updatePost.post_tags = updatePostDto.post_tags;
