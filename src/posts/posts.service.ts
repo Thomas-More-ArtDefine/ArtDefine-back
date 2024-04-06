@@ -47,12 +47,12 @@ export class PostsService {
     return await this.postsRepository.find();
   }
 
-  async findRandomPosts(numberPosts: number, exclude?:string[]): Promise<Post[]> {
+  async findRandomPosts(numberPosts: number, exclude?:string): Promise<Post[]> {
     const totalNumberPosts: number = await this.postsRepository.count();
     let feedArray: Post[] = [];
     let usedIds: string[] = [];
     if (exclude != undefined) {
-      usedIds = exclude;
+      usedIds = exclude.split(',');
       
     }
     let index = 0

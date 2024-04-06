@@ -18,8 +18,12 @@ export class PostsController {
   }
 
   @Get('feed/random')
-  getRandomFeed(@Query('exclude', new ParseArrayPipe({separator: ',' })) exclude: string[]) {
-    return this.postsService.findRandomPosts(10, exclude);
+  getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
+    if (amount != undefined) {
+      return this.postsService.findRandomPosts(amount, exclude);
+    }else{
+      return this.postsService.findRandomPosts(10, exclude);
+    }
   }
 
   @Get('user/:id')
