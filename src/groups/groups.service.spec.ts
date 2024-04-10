@@ -2,9 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GroupsService } from './groups.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Group } from './entities/group.entity';
-import { UsersModule } from 'src/users/users.module';
-import { GroupMembersModule } from 'src/group_members/group_members.module';
-import { GroupRanksModule } from 'src/group_ranks/group_ranks.module';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { GroupMembersService } from 'src/group_members/group_members.service';
@@ -17,11 +14,6 @@ describe('GroupsService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      // imports:[
-      //   UsersModule,
-      //   GroupMembersModule,
-      //   GroupRanksModule
-      // ],
       providers: [GroupsService,
         {
           provide: getRepositoryToken(Group),

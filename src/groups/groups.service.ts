@@ -25,7 +25,6 @@ export class GroupsService {
 
   async createGroup(createGroupDto: CreateGroupDto) {
     const creator: User = await this.usersService.findOneUser(createGroupDto.creator_id);
-    let newGroup: Group = new Group();
     createGroupDto.creator_name = creator.user_name;
 
     let savedGroup: Group = await this.groupsRepository.save(createGroupDto);
@@ -70,9 +69,6 @@ export class GroupsService {
 
   async getGroupMembers(id: string){
     const group: Group = await this.groupsRepository.findOne({
-      // relations: {
-      //   members: true,
-      // },
       where: {
         id: id,
     },
