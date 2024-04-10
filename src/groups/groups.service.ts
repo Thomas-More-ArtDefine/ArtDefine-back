@@ -26,12 +26,9 @@ export class GroupsService {
   async createGroup(createGroupDto: CreateGroupDto) {
     const creator: User = await this.usersService.findOneUser(createGroupDto.creator_id);
     let newGroup: Group = new Group();
-    newGroup.group_name = createGroupDto.group_name;
-    newGroup.creator_id = createGroupDto.creator_id;
-    newGroup.group_userlimit = createGroupDto.group_userlimit;
-    newGroup.creator_name = creator.user_name;
+    createGroupDto.creator_name = creator.user_name;
 
-    let savedGroup: Group = await this.groupsRepository.save(newGroup);
+    let savedGroup: Group = await this.groupsRepository.save(createGroupDto);
 
 
     // make default group ranks: Owner, Member
