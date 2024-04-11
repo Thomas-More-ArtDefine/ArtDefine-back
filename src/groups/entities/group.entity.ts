@@ -5,6 +5,17 @@ import { Link } from 'src/links/entities/link.entity';
 import { Rule } from 'src/rules/entities/rule.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
+export enum GroupVisibility {
+    PRIVATE = "private",
+    PUBLIC = "public"
+}
+
+export enum GroupJoin {
+    OPEN = "open",
+    APPLY = "apply",
+    INVITE = "invite"
+  }
+
 @Entity()
 export class Group {
     @PrimaryGeneratedColumn()
@@ -40,6 +51,20 @@ export class Group {
     @Column({ type: 'date', default: null })
     group_queued_deletion_date: Date;
 
+    @Column({
+        type: "enum",
+        enum: GroupVisibility,
+        default: GroupVisibility.PRIVATE
+    })
+    group_setting_visibility:GroupVisibility;
+
+    @Column({
+        type: "enum",
+        enum: GroupJoin,
+        default: GroupJoin.INVITE
+    })
+    group_setting_join:GroupJoin;
+
     @OneToMany(type => GroupMember, groupMember => groupMember.group, {onDelete: "CASCADE"})
     members: GroupMember[];
 
@@ -48,10 +73,6 @@ export class Group {
 
     @OneToMany(type => Folder, folder => folder.group, {onDelete: "CASCADE"})
     folders: Folder[];
-
-    // @ManyToMany(type => Rule, {onDelete: "CASCADE"})
-    // @JoinTable()
-    // Rules: Rule[];
 
     @OneToMany(type => Rule, rule => rule.group, {onDelete: "CASCADE"})
     rules: Rule[];
