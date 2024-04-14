@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -18,8 +18,12 @@ export class PostsController {
   }
 
   @Get('feed/random')
-  getRandomFeed() {
-    return this.postsService.findRandomPosts(10);
+  getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
+    if (amount != undefined) {
+      return this.postsService.findRandomPosts(amount, exclude);
+    }else{
+      return this.postsService.findRandomPosts(10, exclude);
+    }
   }
 
   @Get('user/:id')

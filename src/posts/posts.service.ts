@@ -8,6 +8,7 @@ import { visibility } from 'src/app.controller';
 import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
+import { User } from 'src/users/entities/user.entity';
 
 
 @Injectable()
@@ -48,19 +49,50 @@ export class PostsService {
     return await this.postsRepository.find();
   }
 
-  async findRandomPosts(numberPosts: number): Promise<Post[]> {
+  async findRandomPosts(numberPosts: number, exclude?:string): Promise<Post[]> {
     const totalNumberPosts: number = await this.postsRepository.count();
+    
     let feedArray: Post[] = [];
+    let usedIds: string[] = [];
+    if (exclude != undefined) {
+      usedIds = exclude.split(',');
+      
+    }
+
+    // return empty array when no posts are found
+    if (totalNumberPosts === 0) {
+      return [];
+    }
+
     let index = 0
     for (let timeout = 0; index < numberPosts; timeout++) {
       let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
-      let post:Post = await this.postsRepository.findOneBy({id});
-      if (post.post_visibility === visibility.PUBLIC) {
-        feedArray.push(post);
-        index++
-      }
-      if (timeout > 50) {
-        break;
+      
+      if (!usedIds.includes(id)) {
+        usedIds.push(id);
+      
+        let post:Post = await this.postsRepository.findOne({
+          where: {
+            id: id,
+        },
+        relations: {
+          user: true
+        }
+        });
+
+        if (post === null) {
+          break;
+        }
+
+        post.user = getBasicUserInfo(post.user);
+
+        if (post.post_visibility === visibility.PUBLIC) {
+          feedArray.push(post);
+          index++
+        }
+        if (timeout > 50) {
+          break;
+        }
       }
     }
     return feedArray;
@@ -163,6 +195,7 @@ export class PostsService {
   }
 }
 
+
 function getBasicGroupInfo(group:Group):Group{
   const cleanedGroup: Group = new Group();
   cleanedGroup.id = group.id;
@@ -171,4 +204,14 @@ function getBasicGroupInfo(group:Group):Group{
   cleanedGroup.group_userlimit = group.group_userlimit;
   cleanedGroup.group_bio = group.group_bio;
   return cleanedGroup;
+
+function getBasicUserInfo(user:User):User{
+  const cleanedUser: User = new User();
+  cleanedUser.id = user.id;
+  cleanedUser.user_name = user.user_name;
+  cleanedUser.user_subtitle = user.user_subtitle;
+  cleanedUser.user_profile_picture = user.user_profile_picture;
+  cleanedUser.user_deactivated = user.user_deactivated;
+  cleanedUser.user_deactivation_date = user.user_deactivation_date;
+  return cleanedUser;
 }
