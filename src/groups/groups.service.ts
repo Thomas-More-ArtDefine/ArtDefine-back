@@ -132,6 +132,8 @@ function getBasicGroupInfo(group:Group):Group{
   cleanedGroup.group_profile_picture = group.group_profile_picture;
   cleanedGroup.group_userlimit = group.group_userlimit;
   cleanedGroup.group_bio = group.group_bio;
+  cleanedGroup.group_setting_visibility = group.group_setting_visibility;
+  cleanedGroup.group_setting_join = group.group_setting_join;
   return cleanedGroup;
 }
 
