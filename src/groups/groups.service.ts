@@ -132,13 +132,13 @@ export class GroupsService {
 }
 
 
-function getBasicGroupInfo(user:Group):Group{
+function getBasicGroupInfo(group:Group):Group{
   const cleanedGroup: Group = new Group();
-  cleanedGroup.id = user.id;
-  cleanedGroup.group_name = user.group_name;
-  cleanedGroup.group_profile_picture = user.group_profile_picture;
-  cleanedGroup.group_userlimit = user.group_userlimit;
-  cleanedGroup.group_bio = user.group_bio;
+  cleanedGroup.id = group.id;
+  cleanedGroup.group_name = group.group_name;
+  cleanedGroup.group_profile_picture = group.group_profile_picture;
+  cleanedGroup.group_userlimit = group.group_userlimit;
+  cleanedGroup.group_bio = group.group_bio;
   return cleanedGroup;
 }
 

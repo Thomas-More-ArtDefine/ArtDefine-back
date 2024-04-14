@@ -7,6 +7,7 @@ import { Repository } from 'typeorm/repository/Repository';
 import { visibility } from 'src/app.controller';
 import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 
 @Injectable()
@@ -75,24 +76,47 @@ export class PostsService {
     );
   }
 
-  findOnePost(id: string): Promise<Post> {
-    return this.postsRepository.findOne({
+  async findOnePost(id: string): Promise<Post> {
+    let post: Post = await this.postsRepository.findOne({
       where: {
         id: id,
     },
-    relations: {
-      folders: true
-    }
+    join: {
+        alias: "post",
+        leftJoinAndSelect: {
+            "folders": "post.folders",
+            "group": "folders.group"
+        }
+    },
     });
+
+    post.folders.forEach((folder) => {
+      console.log(folder.group)
+      if (folder.group_id !== undefined && folder.group_id !== null) {
+        folder.group = getBasicGroupInfo(folder.group);
+      }
+    })
+    return post;
   }
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
-    updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
-    let updatePost: Post = await this.postsRepository.findOneBy({ id });
+    if (updatePostDto.folders !== undefined) {
+      updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
+    }
+    let updatePost: Post = await this.postsRepository.findOne({
+      where: {
+        id: id,
+    },relations: {
+        folders: true
+      }});
     updatePost.post_description = updatePostDto.post_description;
     updatePost.post_tags = updatePostDto.post_tags;
     updatePost.post_title = updatePostDto.post_title; 
-    updatePost.post_visibility = updatePostDto.post_visibility; 
+    updatePost.post_visibility = updatePostDto.post_visibility;
+    if (updatePostDto.folders !== undefined) { 
+    updatePost.folders = await this.updateFolders(updatePostDto.folders);
+  }
+    
     this.postsRepository.save(updatePost);
     return updatePost;
   }
@@ -117,7 +141,34 @@ export class PostsService {
   return check;
   }
 
+  async updateFolders(folders: Folder[]):Promise<Folder[]>{
+    var folderPromise:Promise<Folder[]> = new Promise((resolve, reject) => {
+        let newfolders: Folder[] = [];
+        let index =0;
+        let limit = folders.length;
+      folders.forEach(async (folderId) => {
+        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+        newfolders.push(folder);
+        index++;
+        if (index >= limit) {
+          resolve(newfolders);
+        }
+        });
+  });
+  return folderPromise;
+  }
+
   async removePost(id: string) {
     return await this.postsRepository.delete(id);
   }
+}
+
+function getBasicGroupInfo(group:Group):Group{
+  const cleanedGroup: Group = new Group();
+  cleanedGroup.id = group.id;
+  cleanedGroup.group_name = group.group_name;
+  cleanedGroup.group_profile_picture = group.group_profile_picture;
+  cleanedGroup.group_userlimit = group.group_userlimit;
+  cleanedGroup.group_bio = group.group_bio;
+  return cleanedGroup;
 }
