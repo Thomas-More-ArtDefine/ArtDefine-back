@@ -17,6 +17,21 @@ export class PostsController {
     return this.postsService.findAllPosts();
   }
 
+  @Get('tag/all/:tag')
+  getAllByTag(@Param('tag') tag: string){
+    return this.postsService.findAllByTag(tag);
+  }
+
+  @Get('tag/:tag')
+  getByTag(
+    @Param('tag') tag: string,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('startfrom') startfrom?: string
+  ){
+    return this.postsService.findByTag(tag, amount, orderby, startfrom);
+  }
+
   @Get('feed/random')
   getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
     if (amount != undefined) {
