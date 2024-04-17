@@ -12,6 +12,7 @@ import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.
 import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
 import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
 import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
+import { orderBy } from 'src/app.controller';
 
 @Injectable()
 export class GroupsService {
@@ -69,6 +70,23 @@ export class GroupsService {
       }
     });
     return group;
+  }
+
+  async findGroupsByName(name: string, amount:number, orderby:string, startFrom?:string) {
+    const str = name.replace(/[^a-zA-Z ]/g, "");
+    let query:string = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' LIMIT "+amount.toString()+";";
+
+    if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
+      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' AND id < "+startFrom+" ORDER BY group_name DESC LIMIT "+amount.toString()+";";
+    }else if (orderby === orderBy.DESC) {
+      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' ORDER BY group_name DESC LIMIT "+amount.toString()+";";
+    }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
+      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' AND id > "+startFrom+" ORDER BY group_name ASC LIMIT "+amount.toString()+";";
+    }else{
+      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' ORDER BY group_name ASC LIMIT "+amount.toString()+";";
+    }
+    
+    return this.groupsRepository.query(query);
   }
 
   async getGroupMembers(id: string){
