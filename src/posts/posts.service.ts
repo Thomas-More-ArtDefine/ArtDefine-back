@@ -4,7 +4,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Post } from './entities/post.entity';
 import { Repository } from 'typeorm/repository/Repository';
-import { visibility } from 'src/app.controller';
+import { orderBy, visibility } from 'src/app.controller';
 import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
@@ -106,6 +106,27 @@ export class PostsService {
       },
       }
     );
+  }
+
+  findAllByTag(tag: string): Promise<Post[]> {
+    const query:string = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"');";
+    return this.postsRepository.query(query);
+  }
+
+  findByTag(tag: string, amount:number, orderby:string, startFrom?:string): Promise<Post[]> {
+    let query: string = "";
+    if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
+      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') AND id < "+startFrom+" ORDER BY id DESC LIMIT "+amount.toString()+";";
+    }else if (orderby === orderBy.DESC) {
+      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') ORDER BY id DESC LIMIT "+amount.toString()+";";
+    }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
+      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') AND id > "+startFrom+" ORDER BY id ASC LIMIT "+amount.toString()+";";
+    }
+    else{
+      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') ORDER BY id ASC LIMIT "+amount.toString()+";";
+    }
+    
+    return this.postsRepository.query(query);
   }
 
   async findOnePost(id: string): Promise<Post> {

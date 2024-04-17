@@ -8,6 +8,12 @@ export enum visibility {
   PUBLIC = "public"
 }
 
+export enum orderBy {
+  DESC = "DESC",
+  ASC = "ASC"
+}
+
+
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
