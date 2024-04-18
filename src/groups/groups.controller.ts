@@ -33,7 +33,7 @@ export class GroupsController {
     @Param('visibility') visibility: string,
     @Query('amount') amount:number,
     @Query('orderby') orderby: string, 
-    @Query('startfrom') startfrom?: string
+    @Query('skip') skip: number
   ){
     //return this.groupsService.findGroupsByName(name, amount, orderby, startfrom);
   }
@@ -43,9 +43,9 @@ export class GroupsController {
     @Param('join') join: GroupJoin,
     @Query('amount') amount:number,
     @Query('orderby') orderby: string, 
-    @Query('startfrom') startfrom?: string
+    @Query('skip') skip?: number
   ){
-    //return this.groupsService.findGroupsByName(name, amount, orderby, startfrom);
+    return this.groupsService.findGroupsByJoinMethod(join, amount, orderby, skip);
   }
 
   @Get(':id')

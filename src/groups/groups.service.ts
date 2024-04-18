@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { Group } from './entities/group.entity';
+import { Group, GroupJoin } from './entities/group.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { User } from 'src/users/entities/user.entity';
@@ -76,20 +76,46 @@ export class GroupsService {
   async findGroupsByName(name: string, amount:number, orderby:string, skipAmount:number) {
     const str = name.replace(/[^a-zA-Z ]/g, "");
     let filter: orderBy = orderBy.DESC;
-    console.log(orderBy.DESC);
 
     if (orderby.toUpperCase() === orderBy.ASC) {
       filter = orderBy.ASC;
     }
 
-    return this.groupsRepository.findAndCount({
+    const data = await this.groupsRepository.findAndCount({
       where: {group_name: Like('%'+str+'%')},
       take: amount,
       skip:skipAmount,
       order: {
         group_name: filter
+      },
+      relations:{
+        members: true
       }
     })
+    data[0] = getBasicGroupInfoArray(data[0]);
+    return data;
+  }
+
+  async findGroupsByJoinMethod(join: GroupJoin, amount:number, orderby:string, skipAmount:number) {
+    let filter: orderBy = orderBy.DESC;
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
+    }
+
+    const data = this.groupsRepository.findAndCount({
+      where: {group_setting_join: join},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      },
+      relations:{
+        members: true
+      }
+    })
+
+    data[0] = getBasicGroupInfoArray(data[0]);
+    return data;
 
   }
 
