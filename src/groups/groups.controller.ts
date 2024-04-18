@@ -23,9 +23,9 @@ export class GroupsController {
     @Param('name') name: string,
     @Query('amount') amount:number,
     @Query('orderby') orderby: string, 
-    @Query('startfrom') startfrom?: string
+    @Query('skip') skip: number
   ){
-    return this.groupsService.findGroupsByName(name, amount, orderby, startfrom);
+    return this.groupsService.findGroupsByName(name, amount, orderby, skip);
   }
 
   @Get('search/visibility/:visibility')

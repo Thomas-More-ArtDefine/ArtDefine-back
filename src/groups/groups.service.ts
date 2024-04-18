@@ -13,6 +13,7 @@ import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
 import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
 import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
 import { orderBy } from 'src/app.controller';
+import { Like } from 'typeorm';
 
 @Injectable()
 export class GroupsService {
@@ -72,21 +73,24 @@ export class GroupsService {
     return group;
   }
 
-  async findGroupsByName(name: string, amount:number, orderby:string, startFrom?:string) {
+  async findGroupsByName(name: string, amount:number, orderby:string, skipAmount:number) {
     const str = name.replace(/[^a-zA-Z ]/g, "");
-    let query:string = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' LIMIT "+amount.toString()+";";
+    let filter: orderBy = orderBy.DESC;
+    console.log(orderBy.DESC);
 
-    if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
-      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' AND id < "+startFrom+" ORDER BY group_name DESC LIMIT "+amount.toString()+";";
-    }else if (orderby === orderBy.DESC) {
-      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' ORDER BY group_name DESC LIMIT "+amount.toString()+";";
-    }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
-      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' AND id > "+startFrom+" ORDER BY group_name ASC LIMIT "+amount.toString()+";";
-    }else{
-      query = "SELECT * FROM GROUP WHERE group_name ILIKE '%" + str + "%' ORDER BY group_name ASC LIMIT "+amount.toString()+";";
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
     }
-    
-    return this.groupsRepository.query(query);
+
+    return this.groupsRepository.findAndCount({
+      where: {group_name: Like('%'+str+'%')},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      }
+    })
+
   }
 
   async getGroupMembers(id: string){
