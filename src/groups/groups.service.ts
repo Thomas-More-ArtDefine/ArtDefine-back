@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { Group, GroupJoin } from './entities/group.entity';
+import { Group, GroupJoin, GroupVisibility } from './entities/group.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { User } from 'src/users/entities/user.entity';
@@ -92,7 +92,9 @@ export class GroupsService {
         members: true
       }
     })
-    data[0] = getBasicGroupInfoArray(data[0]);
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
     return data;
   }
 
@@ -102,7 +104,7 @@ export class GroupsService {
       filter = orderBy.ASC;
     }
 
-    const data = this.groupsRepository.findAndCount({
+    const data = await this.groupsRepository.findAndCount({
       where: {group_setting_join: join},
       take: amount,
       skip:skipAmount,
@@ -113,8 +115,35 @@ export class GroupsService {
         members: true
       }
     })
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
+    return data;
 
-    data[0] = getBasicGroupInfoArray(data[0]);
+  }
+
+  async findGroupsByVisibility(groupvisibility: GroupVisibility, amount:number, orderby:string, skipAmount:number) {
+    let filter: orderBy = orderBy.DESC;
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
+    }
+
+    const data = await this.groupsRepository.findAndCount({
+      where: {group_setting_visibility: groupvisibility},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      },
+      relations:{
+        members: true
+      }
+    })
+
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
+    
     return data;
 
   }
