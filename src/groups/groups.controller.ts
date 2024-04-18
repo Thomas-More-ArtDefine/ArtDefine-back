@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { GroupJoin, GroupVisibility } from './entities/group.entity';
 
 @Controller('groups')
 export class GroupsController {
@@ -17,9 +18,39 @@ export class GroupsController {
     return this.groupsService.findAllGroups();
   }
 
+  @Get('search/name/:name')
+  getByName(
+    @Param('name') name: string,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('skip') skip: number
+  ){
+    return this.groupsService.findGroupsByName(name, amount, orderby, skip);
+  }
+
+  @Get('search/visibility/:visibility')
+  getByVisibility(
+    @Param('visibility') visibility: GroupVisibility,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('skip') skip: number
+  ){
+    return this.groupsService.findGroupsByVisibility(visibility, amount, orderby, skip);
+  }
+
+  @Get('search/join/:join')
+  getByJoinSetting(
+    @Param('join') join: GroupJoin,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('skip') skip?: number
+  ){
+    return this.groupsService.findGroupsByJoinMethod(join, amount, orderby, skip);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.groupsService.findOneGroup(id);
+    return this.groupsService.findOneGroup(id); 
   }
 
   @Get(':id/members')

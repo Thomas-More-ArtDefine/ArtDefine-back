@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { Group } from './entities/group.entity';
+import { Group, GroupJoin, GroupVisibility } from './entities/group.entity';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm/repository/Repository';
 import { User } from 'src/users/entities/user.entity';
@@ -12,6 +12,8 @@ import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.
 import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
 import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
 import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
+import { orderBy } from 'src/app.controller';
+import { Like } from 'typeorm';
 
 @Injectable()
 export class GroupsService {
@@ -69,6 +71,81 @@ export class GroupsService {
       }
     });
     return group;
+  }
+
+  async findGroupsByName(name: string, amount:number, orderby:string, skipAmount:number) {
+    const str = name.replace(/[^a-zA-Z ]/g, "");
+    let filter: orderBy = orderBy.DESC;
+
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
+    }
+
+    const data = await this.groupsRepository.findAndCount({
+      where: {group_name: Like('%'+str+'%')},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      },
+      relations:{
+        members: true
+      }
+    })
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
+    return data;
+  }
+
+  async findGroupsByJoinMethod(join: GroupJoin, amount:number, orderby:string, skipAmount:number) {
+    let filter: orderBy = orderBy.DESC;
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
+    }
+
+    const data = await this.groupsRepository.findAndCount({
+      where: {group_setting_join: join},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      },
+      relations:{
+        members: true
+      }
+    })
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
+    return data;
+
+  }
+
+  async findGroupsByVisibility(groupvisibility: GroupVisibility, amount:number, orderby:string, skipAmount:number) {
+    let filter: orderBy = orderBy.DESC;
+    if (orderby.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
+    }
+
+    const data = await this.groupsRepository.findAndCount({
+      where: {group_setting_visibility: groupvisibility},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        group_name: filter
+      },
+      relations:{
+        members: true
+      }
+    })
+
+    if (data[1] !== 0) {
+      data[0] = getBasicGroupInfoArray(data[0]);
+    }
+    
+    return data;
+
   }
 
   async getGroupMembers(id: string){
