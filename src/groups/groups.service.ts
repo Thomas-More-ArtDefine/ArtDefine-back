@@ -14,6 +14,8 @@ import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
 import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
 import { orderBy } from 'src/app.controller';
 import { Like } from 'typeorm';
+import { UpdateGroupSettingsDto } from './dto/update-group-settings.dto';
+import { UpdateGroupDeletionDto } from './dto/update-group-deletion.dto';
 
 @Injectable()
 export class GroupsService {
@@ -23,7 +25,9 @@ export class GroupsService {
     private readonly usersService: UsersService,
     private readonly groupMembersService: GroupMembersService,
     private readonly groupranksService: GroupRanksService
-  ) {}
+  ) {
+    this.removeQueuedGroups();
+  }
 
   async createGroup(createGroupDto: CreateGroupDto) {
     const creator: User = await this.usersService.findOneUser(createGroupDto.creator_id);
@@ -169,19 +173,39 @@ export class GroupsService {
   return group;
   }
 
-  async updateGroup(id: string, updateGroupDto: UpdateGroupDto) {
+  async updateGroupGeneral(id: string, updateGroupDto: UpdateGroupDto) {
     let updateGroup: Group = await this.groupsRepository.findOneBy({ id });
 
     updateGroup.group_name = updateGroupDto.group_name;
     updateGroup.group_bio = updateGroupDto.group_bio;
     updateGroup.group_profile_picture = updateGroupDto.group_profile_picture;
-    updateGroupDto.group_banner_picture = updateGroupDto.group_banner_picture;
-    updateGroup.group_userlimit = updateGroupDto.group_userlimit;
+    updateGroup.group_banner_picture = updateGroupDto.group_banner_picture;
 
-    if ((updateGroup.group_queued_deletion === false) && (updateGroupDto.group_queued_deletion === true)) {
-      updateGroup.group_queued_deletion = updateGroupDto.group_queued_deletion;
+    this.groupsRepository.save(updateGroup);
+    return updateGroup;
+  }
+
+  async updateGroupSettings (id: string, updateGroupSettingsDto: UpdateGroupSettingsDto) {
+    let updateGroup: Group = await this.groupsRepository.findOneBy({ id });
+
+    updateGroup.group_userlimit = updateGroupSettingsDto.group_userlimit;
+    updateGroup.group_setting_join = updateGroupSettingsDto.group_setting_join;
+    updateGroup.group_setting_visibility = updateGroupSettingsDto.group_setting_visibility;
+
+    this.groupsRepository.save(updateGroup);
+    return updateGroup;
+  }
+
+  async updateGroupDeletion (id: string, updateGroupDeletionDto: UpdateGroupDeletionDto) {
+    let updateGroup: Group = await this.groupsRepository.findOneBy({ id });
+
+    if ((updateGroup.group_queued_deletion === false) && (updateGroupDeletionDto.group_queued_deletion === true)) {
       updateGroup.group_queued_deletion_date = new Date();
+    } else if((updateGroup.group_queued_deletion === true) && (updateGroupDeletionDto.group_queued_deletion === false)){
+      updateGroup.group_queued_deletion_date = null;
     }
+
+    updateGroup.group_queued_deletion = updateGroupDeletionDto.group_queued_deletion;
 
     this.groupsRepository.save(updateGroup);
     return updateGroup;
@@ -190,9 +214,13 @@ export class GroupsService {
   // function that removes a group 7 days after the deletion queue initiation
   // should only run at server refresh (during lowest traffic hours)
   async removeQueuedGroups() {
-    const groups: Group[] = await this.groupsRepository.find()
+    const groups: Group[] = await this.groupsRepository.find({
+      where: {
+        group_queued_deletion: true,
+    },
+    })
     const today: Date = new Date();
-    today.getDate()
+
     groups.forEach( function (group){
       if ((group.group_queued_deletion === true) && (group.group_queued_deletion_date.getDate() <= today.getDate()-7)) {
         this.removeGroup(group.id);

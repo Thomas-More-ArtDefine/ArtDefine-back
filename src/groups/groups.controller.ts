@@ -3,6 +3,7 @@ import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupJoin, GroupVisibility } from './entities/group.entity';
+import { UpdateGroupSettingsDto } from './dto/update-group-settings.dto';
 
 @Controller('groups')
 export class GroupsController {
@@ -60,7 +61,17 @@ export class GroupsController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
-    return this.groupsService.updateGroup(id, updateGroupDto);
+    return this.groupsService.updateGroupGeneral(id, updateGroupDto);
+  }
+
+  @Patch(':id/settings')
+  updateSettings(@Param('id') id: string, @Body() updateGroupSettingsDto: UpdateGroupSettingsDto) {
+    return this.groupsService.updateGroupSettings(id, updateGroupSettingsDto);
+  }
+
+  @Patch(':id/deletion')
+  setDeletion(@Param('id') id: string, @Body() updateGroupSettingsDto: UpdateGroupSettingsDto) {
+    //return this.groupsService.updateGroupSettings(id, updateGroupSettingsDto);
   }
 
   @Delete(':id')
