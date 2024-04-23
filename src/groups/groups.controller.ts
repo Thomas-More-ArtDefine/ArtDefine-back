@@ -4,6 +4,7 @@ import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { GroupJoin, GroupVisibility } from './entities/group.entity';
 import { UpdateGroupSettingsDto } from './dto/update-group-settings.dto';
+import { UpdateGroupDeletionDto } from './dto/update-group-deletion.dto';
 
 @Controller('groups')
 export class GroupsController {
@@ -70,8 +71,8 @@ export class GroupsController {
   }
 
   @Patch(':id/deletion')
-  setDeletion(@Param('id') id: string, @Body() updateGroupSettingsDto: UpdateGroupSettingsDto) {
-    //return this.groupsService.updateGroupSettings(id, updateGroupSettingsDto);
+  setDeletion(@Param('id') id: string, @Body() updateGroupDeletionDto: UpdateGroupDeletionDto) {
+    return this.groupsService.updateGroupDeletion(id, updateGroupDeletionDto);
   }
 
   @Delete(':id')
