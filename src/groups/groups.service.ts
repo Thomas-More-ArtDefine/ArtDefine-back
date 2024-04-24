@@ -68,7 +68,8 @@ export class GroupsService {
   async findOneGroup(id: string) {
     let group: Group = await this.groupsRepository.findOne({
       relations: {
-        links: true
+        links: true,
+        members: true
       },
       where: {
         id: id,
