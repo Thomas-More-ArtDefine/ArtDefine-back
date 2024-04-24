@@ -138,17 +138,18 @@ export class PostsService {
         alias: "post",
         leftJoinAndSelect: {
             "folders": "post.folders",
-            "group": "folders.group"
+            "group": "folders.group",
+            "group_members": "group.members"
         }
     },
     });
 
     post.folders.forEach((folder) => {
-      console.log(folder.group)
       if (folder.group_id !== undefined && folder.group_id !== null) {
         folder.group = getBasicGroupInfo(folder.group);
       }
     })
+
     return post;
   }
 
@@ -226,6 +227,16 @@ function getBasicGroupInfo(group:Group):Group{
   cleanedGroup.group_bio = group.group_bio;
   cleanedGroup.group_setting_visibility = group.group_setting_visibility;
   cleanedGroup.group_setting_join = group.group_setting_join;
+  // used for membercount in groupcards
+  if (group.members !== undefined && group.members !== null) {
+    group.members.forEach((member) => {
+      member.member_id = undefined;
+      member.grouprank_id = undefined;
+      member.member_join_date = undefined;
+      member.id = undefined;
+    })
+    cleanedGroup.members = group.members;
+  }
   return cleanedGroup;
 }
 

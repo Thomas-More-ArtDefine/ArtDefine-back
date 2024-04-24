@@ -1,23 +1,48 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateGroupDto } from './create-group.dto';
 import { Rule } from 'src/rules/entities/rule.entity';
-import { IsArray, IsBoolean, IsDate, IsString } from 'class-validator';
+import { IsEmpty, IsString } from 'class-validator';
+import { GroupRank } from 'src/group_ranks/entities/group_rank.entity';
+import { GroupMember } from 'src/group_members/entities/group_member.entity';
+import { Link } from 'src/links/entities/link.entity';
+import { Folder } from 'src/folders/entities/folder.entity';
+import { GroupJoin, GroupVisibility } from '../entities/group.entity';
 
-export class UpdateGroupDto extends PartialType(CreateGroupDto) {
+export class UpdateGroupDto {
     @IsString()
     group_name:string;
-    @IsString()
-    group_userlimit:number;
     @IsString()
     group_bio: string;
     @IsString()
     group_profile_picture: string;
     @IsString()
     group_banner_picture: string;
-    @IsBoolean()
+    
+
+    @IsEmpty()
+    id: string;
+    @IsEmpty()
+    creator_id:string;
+    @IsEmpty()
+    creator_name: string;
+    @IsEmpty()
+    group_creationdate: Date;
+    @IsEmpty()
     group_queued_deletion: boolean;
-    @IsDate()
+    @IsEmpty()
     group_queued_deletion_date: Date;
-    @IsArray()
-    Rules: Rule[];
+    @IsEmpty()
+    group_userlimit:number;
+    @IsEmpty()
+    group_setting_visibility:GroupVisibility;
+    @IsEmpty()
+    group_setting_join:GroupJoin;
+    @IsEmpty()
+    members: GroupMember[];
+    @IsEmpty()
+    links: Link[];
+    @IsEmpty()
+    folders: Folder[];
+    @IsEmpty()
+    rules: Rule[];
+    @IsEmpty()
+    ranks: GroupRank[];
 }
