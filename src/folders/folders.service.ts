@@ -11,12 +11,33 @@ export class FoldersService {
     @InjectRepository(Folder)
     private readonly foldersRepository: Repository<Folder>,
   ) {}
-  createFolder(createFolderDto: CreateFolderDto) {
+
+  async createFolder(createFolderDto: CreateFolderDto) {
     if ((createFolderDto.group == null) && (createFolderDto.user == null)) {
       return "ERROR-folder needs to be assigned to an owner.";
     }else if ((createFolderDto.group != null) && (createFolderDto.user != null)) {
       return "ERROR-folder can only have one owner.";
     }else{
+      let queryResult;
+      if (createFolderDto.group !== null) {
+        queryResult = this.foldersRepository.findAndCount({
+          where: {
+            group_id: createFolderDto.group.id,
+          }
+        });
+      }
+      
+      else{
+        queryResult = this.foldersRepository.findAndCount({
+          where: {
+            user_id: createFolderDto.user.id,
+          }
+        });
+        
+      }
+
+      const count: any  = await queryResult;
+      createFolderDto.folder_order = count[1] + 1;
       this.foldersRepository.save(createFolderDto);
       return createFolderDto;
     }

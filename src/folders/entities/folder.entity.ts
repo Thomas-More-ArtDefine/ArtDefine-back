@@ -24,6 +24,9 @@ export class Folder {
     @JoinColumn({name: 'group_id'})
     group: Group;
 
+    @Column({ type: 'int' })
+    folder_order: number;
+
     @Column({ type: 'varchar', length: 100 })
     folder_name: string;
 
