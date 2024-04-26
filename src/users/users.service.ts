@@ -8,6 +8,8 @@ import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 import { FoldersService } from 'src/folders/folders.service';
 import { CreateFolderDto } from 'src/folders/dto/create-folder.dto';
 import { visibility } from 'src/app.controller';
+import { GroupMember } from 'src/group_members/entities/group_member.entity';
+import { Group } from 'src/groups/entities/group.entity';
 
 @Injectable()
 export class UsersService {
@@ -75,6 +77,28 @@ export class UsersService {
     })
     );
   }
+
+  async findAllGroups(id: string) {
+    const user: User = await this.usersRepository.findOne({
+      where:{
+        id: id
+      },
+      join: {
+        alias: "user",
+        leftJoinAndSelect: {
+            "joinedGroups": "user.groups",
+            "group": "joinedGroups.group",
+            "group_members": "group.members"
+        }
+      }
+    });
+
+    
+
+    return getBasicUserGroupInfo(user.groups);
+    //return user.groups;
+  }
+
 
   // async updateUser(id: string, updateUserDto: UpdateUserDto) {
   //   let updateUser: User = await this.usersRepository.findOneBy({ id }); 
@@ -202,5 +226,46 @@ function getBasicUserInfo(user:User):User{
     cleanedUser.user_deactivated = user.user_deactivated;
     cleanedUser.user_deactivation_date = user.user_deactivation_date;
     return cleanedUser;
+  }
+
+  function getBasicUserGroupInfo(groups:GroupMember[]){
+    let array: GroupMember[] = [];
+    groups.forEach( (group) => {
+      const cleanedGroupMember: GroupMember = new GroupMember();
+      cleanedGroupMember.id = group.id;
+      cleanedGroupMember.member_join_date = group.member_join_date;
+      cleanedGroupMember.grouprank_id = group.grouprank_id;
+      cleanedGroupMember.group_id = group.group_id;
+
+      const cleanedGroup: Group = getBasicGroupInfo(group.group);
+
+      cleanedGroupMember.group = cleanedGroup;
+      array.push(cleanedGroupMember);
+    })
+    
+    
+    return array;
+  }
+
+  function getBasicGroupInfo(group:Group):Group{
+    const cleanedGroup: Group = new Group();
+    cleanedGroup.id = group.id;
+    cleanedGroup.group_name = group.group_name;
+    cleanedGroup.group_profile_picture = group.group_profile_picture;
+    cleanedGroup.group_userlimit = group.group_userlimit;
+    cleanedGroup.group_bio = group.group_bio;
+    cleanedGroup.group_setting_visibility = group.group_setting_visibility;
+    cleanedGroup.group_setting_join = group.group_setting_join;
+    // used for membercount in groupcards
+    if (group.members !== undefined && group.members !== null) {
+      group.members.forEach((member) => {
+        member.member_id = undefined;
+        member.grouprank_id = undefined;
+        member.member_join_date = undefined;
+        member.id = undefined;
+      })
+      cleanedGroup.members = group.members;
+    }
+    return cleanedGroup;
   }
 
