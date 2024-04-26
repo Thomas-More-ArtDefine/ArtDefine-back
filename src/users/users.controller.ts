@@ -35,6 +35,11 @@ export class UsersController {
     return this.usersService.findAllFollowers(id);
   }
 
+  @Get(':id/groups')
+  findGroups(@Param('id') id: string) {
+    return this.usersService.findAllGroups(id);
+  }
+
   // @Patch(':id')
   // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
   //   return this.usersService.updateUser(id, updateUserDto);
