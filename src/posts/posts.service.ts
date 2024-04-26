@@ -66,7 +66,6 @@ export class PostsService {
 
     let index = 0
     for (let timeout = 0; timeout < 1000; timeout++) {
-      console.log("timeout: " + timeout.toString());
       let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
       
       if (!usedIds.includes(id)) {
@@ -91,7 +90,6 @@ export class PostsService {
           feedArray.push(post);
           index++
         }
-        console.log("index: " + index.toString());
         if (index >= numberPosts) {
           break;
         }

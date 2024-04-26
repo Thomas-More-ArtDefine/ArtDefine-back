@@ -229,18 +229,19 @@ function getBasicUserInfo(user:User):User{
   }
 
   function getBasicUserGroupInfo(groups:GroupMember[]){
-    let array: GroupMember[] = [];
+    // let array: GroupMember[] = [];
+    let array: Group[] = [];
     groups.forEach( (group) => {
-      const cleanedGroupMember: GroupMember = new GroupMember();
-      cleanedGroupMember.id = group.id;
-      cleanedGroupMember.member_join_date = group.member_join_date;
-      cleanedGroupMember.grouprank_id = group.grouprank_id;
-      cleanedGroupMember.group_id = group.group_id;
+      // const cleanedGroupMember: GroupMember = new GroupMember();
+      // cleanedGroupMember.id = group.id;
+      // cleanedGroupMember.member_join_date = group.member_join_date;
+      // cleanedGroupMember.grouprank_id = group.grouprank_id;
+      // cleanedGroupMember.group_id = group.group_id;
 
       const cleanedGroup: Group = getBasicGroupInfo(group.group);
 
-      cleanedGroupMember.group = cleanedGroup;
-      array.push(cleanedGroupMember);
+      // cleanedGroupMember.group = cleanedGroup;
+      array.push(cleanedGroup);
     })
     
     
