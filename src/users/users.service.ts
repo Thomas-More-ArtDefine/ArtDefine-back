@@ -5,6 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
+import { FoldersService } from 'src/folders/folders.service';
+import { CreateFolderDto } from 'src/folders/dto/create-folder.dto';
+import { visibility } from 'src/app.controller';
 
 @Injectable()
 export class UsersService {
@@ -12,11 +15,20 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
+    private readonly foldersService: FoldersService,
   ) {}
 
-  createUser(createUserDto: CreateUserDto) {
-    this.usersRepository.save(createUserDto);
-    return createUserDto;
+  async createUser(createUserDto: CreateUserDto) {
+    const savedUser: User = await this.usersRepository.save(createUserDto);
+
+    // make general folder
+    let createFolderDto: CreateFolderDto = new CreateFolderDto();
+    createFolderDto.folder_name = "General";
+    createFolderDto.user =  savedUser;
+    createFolderDto.folder_visibility = visibility.PRIVATE;
+    await this.foldersService.createFolder(createFolderDto);
+    
+    return savedUser;
   }
 
   async findAllUsers(): Promise<User[]> {

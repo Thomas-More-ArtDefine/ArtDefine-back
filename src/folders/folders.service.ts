@@ -19,7 +19,7 @@ export class FoldersService {
       return "ERROR-folder can only have one owner.";
     }else{
       let queryResult;
-      if (createFolderDto.group !== null) {
+      if (createFolderDto.group !== null && createFolderDto.group !== undefined) {
         queryResult = this.foldersRepository.findAndCount({
           where: {
             group_id: createFolderDto.group.id,
