@@ -96,7 +96,6 @@ export class UsersService {
     
 
     return getBasicUserGroupInfo(user.groups);
-    //return user.groups;
   }
 
 

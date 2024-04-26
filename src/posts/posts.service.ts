@@ -248,5 +248,5 @@ function getBasicUserInfo(user:User):User{
   cleanedUser.user_profile_picture = user.user_profile_picture;
   cleanedUser.user_deactivated = user.user_deactivated;
   cleanedUser.user_deactivation_date = user.user_deactivation_date;
-  return cleanedUser;
+  return cleanedUser; 
 }
