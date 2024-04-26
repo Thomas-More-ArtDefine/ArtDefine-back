@@ -66,7 +66,6 @@ export class PostsService {
 
     let index = 0
     for (let timeout = 0; timeout < 1000; timeout++) {
-      console.log("timeout: " + timeout.toString());
       let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
       
       if (!usedIds.includes(id)) {
@@ -91,7 +90,6 @@ export class PostsService {
           feedArray.push(post);
           index++
         }
-        console.log("index: " + index.toString());
         if (index >= numberPosts) {
           break;
         }
@@ -250,5 +248,5 @@ function getBasicUserInfo(user:User):User{
   cleanedUser.user_profile_picture = user.user_profile_picture;
   cleanedUser.user_deactivated = user.user_deactivated;
   cleanedUser.user_deactivation_date = user.user_deactivation_date;
-  return cleanedUser;
+  return cleanedUser; 
 }
