@@ -34,7 +34,7 @@ export class PostsController {
 
   @Get('feed/random')
   getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
-    if (amount != undefined) {
+    if (amount !== undefined) {
       return this.postsService.findRandomPosts(amount, exclude);
     }else{
       return this.postsService.findRandomPosts(10, exclude);

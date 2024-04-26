@@ -13,8 +13,7 @@ export class GroupRanksService {
   ) {}
 
   async createMemberRank(createGroupRankDto: CreateGroupRankDto) {
-    await this.groupRanksRepository.save(createGroupRankDto);
-    return createGroupRankDto;
+    return await this.groupRanksRepository.save(createGroupRankDto);
   }
 
   findAllMemberRanks() {

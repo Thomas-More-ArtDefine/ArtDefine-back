@@ -11,11 +11,13 @@ import { GroupMembersService } from 'src/group_members/group_members.service';
 import { CreateGroupMemberDto } from 'src/group_members/dto/create-group_member.dto';
 import { GroupRanksService } from 'src/group_ranks/group_ranks.service';
 import { CreateGroupRankDto } from 'src/group_ranks/dto/create-group_rank.dto';
-import { group_rank } from 'src/group_ranks/entities/group_rank.entity';
-import { orderBy } from 'src/app.controller';
+import { GroupRank, group_rank } from 'src/group_ranks/entities/group_rank.entity';
+import { orderBy, visibility } from 'src/app.controller';
 import { Like } from 'typeorm';
 import { UpdateGroupSettingsDto } from './dto/update-group-settings.dto';
 import { UpdateGroupDeletionDto } from './dto/update-group-deletion.dto';
+import { CreateFolderDto } from 'src/folders/dto/create-folder.dto';
+import { FoldersService } from 'src/folders/folders.service';
 
 @Injectable()
 export class GroupsService {
@@ -24,7 +26,8 @@ export class GroupsService {
     private readonly groupsRepository: Repository<Group>,
     private readonly usersService: UsersService,
     private readonly groupMembersService: GroupMembersService,
-    private readonly groupranksService: GroupRanksService
+    private readonly groupranksService: GroupRanksService,
+    private readonly foldersService: FoldersService,
   ) {
     this.removeQueuedGroups();
   }
@@ -47,13 +50,21 @@ export class GroupsService {
     createOwnerRankDto.default_rank = false;
     createOwnerRankDto.group = savedGroup;
     createOwnerRankDto.rank = group_rank.OWNER;
-    await this.groupranksService.createMemberRank(createOwnerRankDto);
+    const ownerRank: Promise<GroupRank> = this.groupranksService.createMemberRank(createOwnerRankDto);
 
     // make owner group member
     let createGroupMemberDto: CreateGroupMemberDto = new CreateGroupMemberDto();
     createGroupMemberDto.member = creator;
     createGroupMemberDto.group = savedGroup;
+    createGroupMemberDto.rank = await ownerRank;
     await this.groupMembersService.createGroupOwner(createGroupMemberDto);
+
+    // make general folder
+    let createFolderDto: CreateFolderDto = new CreateFolderDto();
+    createFolderDto.folder_name = "General";
+    createFolderDto.group = savedGroup;
+    createFolderDto.folder_visibility = (savedGroup.group_setting_visibility == GroupVisibility.PUBLIC) ? visibility.PUBLIC : visibility.PRIVATE;
+    await this.foldersService.createFolder(createFolderDto);
     return savedGroup; 
   }
 
