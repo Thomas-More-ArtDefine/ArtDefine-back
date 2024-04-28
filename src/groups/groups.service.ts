@@ -80,12 +80,23 @@ export class GroupsService {
     let group: Group = await this.groupsRepository.findOne({
       relations: {
         links: true,
-        members: true
+        folders: true
       },
       where: {
         id: id,
-      }
+      },
+      join: {
+          alias: "group",
+          leftJoinAndSelect: {
+              "members": "group.members",
+              "member": "members.member"
+          }
+        }
     });
+
+    group.members.forEach( function (group_member:GroupMember){
+      group_member.member = getBasicUserInfo(group_member.member);
+    })
     return group;
   }
 

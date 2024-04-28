@@ -24,7 +24,7 @@ export class Group {
     @Column({ type: 'varchar', length: 50 })
     group_name: string;
 
-    @Column({ type: 'char', length: 50, name: 'creator_id' })
+    @Column({ type: 'varchar', name: 'creator_id' })
     creator_id: string;
 
     @Column({ type: 'varchar', length: 50, default: "" })
