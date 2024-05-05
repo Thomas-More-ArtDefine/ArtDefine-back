@@ -26,6 +26,9 @@ import { GroupRanksModule } from './group_ranks/group_ranks.module';
 import { FeedbackQuestionsModule } from './feedback_questions/feedback_questions.module';
 import { FeedbackResultsModule } from './feedback_results/feedback_results.module';
 import { GroupMembersModule } from './group_members/group_members.module';
+import { SeederService } from './seeder.service';
+import { UserSeeder } from './database/seeds/user.seeder';
+import { GroupSeeder } from './database/seeds/group.seeder';
 
 @Module({
   imports: [
@@ -53,6 +56,6 @@ import { GroupMembersModule } from './group_members/group_members.module';
     GroupMembersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,SeederService, UserSeeder,GroupSeeder],
 })
 export class AppModule {}
