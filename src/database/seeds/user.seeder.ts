@@ -9,7 +9,7 @@ export class UserSeeder implements Seeder {
   ): Promise<User[]> {
     await dataSource.query('DELETE FROM "user";');
     const repository = dataSource.getRepository(User);
-    const users : User[]  = [
+    const users: User[] = [
       {
         user_name: 'Test User',
         user_email: 'testuser@example.com',
@@ -31,7 +31,7 @@ export class UserSeeder implements Seeder {
         folders: [],
         given_feedback: [],
         following: [],
-        rules: []
+        rules: [],
       },
       {
         user_name: 'User 2',
@@ -54,7 +54,7 @@ export class UserSeeder implements Seeder {
         folders: [],
         given_feedback: [],
         following: [],
-        rules: []
+        rules: [],
       },
       {
         user_name: 'User 3',
@@ -77,7 +77,7 @@ export class UserSeeder implements Seeder {
         folders: [],
         given_feedback: [],
         following: [],
-        rules: []
+        rules: [],
       },
     ];
 
