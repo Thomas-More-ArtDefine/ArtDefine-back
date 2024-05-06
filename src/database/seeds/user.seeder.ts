@@ -9,7 +9,7 @@ export class UserSeeder implements Seeder {
   ): Promise<User[]> {
     await dataSource.query('DELETE FROM "user";');
     const repository = dataSource.getRepository(User);
-    const users = [
+    const users : User[]  = [
       {
         user_name: 'Test User',
         user_email: 'testuser@example.com',
@@ -22,6 +22,16 @@ export class UserSeeder implements Seeder {
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
+        id: null,
+        posts: [],
+        groups: [],
+        send_messages: [],
+        received_messages: [],
+        links: [],
+        folders: [],
+        given_feedback: [],
+        following: [],
+        rules: []
       },
       {
         user_name: 'User 2',
@@ -35,6 +45,16 @@ export class UserSeeder implements Seeder {
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
+        id: null,
+        posts: [],
+        groups: [],
+        send_messages: [],
+        received_messages: [],
+        links: [],
+        folders: [],
+        given_feedback: [],
+        following: [],
+        rules: []
       },
       {
         user_name: 'User 3',
@@ -48,6 +68,16 @@ export class UserSeeder implements Seeder {
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
+        id: null,
+        posts: [],
+        groups: [],
+        send_messages: [],
+        received_messages: [],
+        links: [],
+        folders: [],
+        given_feedback: [],
+        following: [],
+        rules: []
       },
     ];
 

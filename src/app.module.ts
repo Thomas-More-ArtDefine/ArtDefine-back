@@ -29,6 +29,11 @@ import { GroupMembersModule } from './group_members/group_members.module';
 import { SeederService } from './seeder.service';
 import { UserSeeder } from './database/seeds/user.seeder';
 import { GroupSeeder } from './database/seeds/group.seeder';
+import { GroupMembersSeeder } from './database/seeds/group_members.seeder';
+import { FolderSeeder } from './database/seeds/folder.seeder';
+import { PostSeeder } from './database/seeds/post.seeder';
+import { LinkSeeder } from './database/seeds/link.seeder';
+import { RuleSeeder } from './database/seeds/rule.seeder';
 
 @Module({
   imports: [
@@ -39,7 +44,20 @@ import { GroupSeeder } from './database/seeds/group.seeder';
       username: 'artdefine',
       password: 'localDB',
       database: 'artdefine',
-      entities: [User,Post,Directmessage, Group, GroupMember, Link, Folder, FeedbackQuestion, FeedbackTemplate, FeedbackResult, GroupRank, Rule],
+      entities: [
+        User,
+        Post,
+        Directmessage,
+        Group,
+        GroupMember,
+        Link,
+        Folder,
+        FeedbackQuestion,
+        FeedbackTemplate,
+        FeedbackResult,
+        GroupRank,
+        Rule,
+      ],
       synchronize: true,
     }),
     UsersModule,
@@ -56,6 +74,16 @@ import { GroupSeeder } from './database/seeds/group.seeder';
     GroupMembersModule,
   ],
   controllers: [AppController],
-  providers: [AppService,SeederService, UserSeeder,GroupSeeder],
+  providers: [
+    AppService,
+    SeederService,
+    UserSeeder,
+    GroupSeeder,
+    GroupMembersSeeder,
+    FolderSeeder,
+    PostSeeder,
+    LinkSeeder,
+    RuleSeeder,
+  ],
 })
 export class AppModule {}
