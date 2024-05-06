@@ -22,7 +22,7 @@ export class UserSeeder implements Seeder {
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
-        id: null,
+        id: '1111',
         posts: [],
         groups: [],
         send_messages: [],

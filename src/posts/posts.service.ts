@@ -20,6 +20,7 @@ export class PostsService {
   ) {}
 
   async createPost(createPostDto: CreatePostDto) {
+    
     createPostDto = await this.checkPostVisibilityUpload(createPostDto);
     
     return await this.postsRepository.save(createPostDto);
@@ -27,20 +28,25 @@ export class PostsService {
 
   async checkPostVisibilityUpload(post: CreatePostDto):Promise<CreatePostDto>{
     var check:Promise<CreatePostDto> = new Promise((resolve, reject) => {
+      if (post.folders !== undefined && post.folders.length !== 0) {
         let index = 1;
-      post.folders.forEach(async (folderId) => {
-        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
-        // TODO: account for other visibility types
-        if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
-          post.post_visibility = visibility.PUBLIC;
-          resolve(post);
-        }else if(post.folders.length <= index){
-          post.post_visibility = visibility.PRIVATE;
-          resolve(post);
-        }else{
-          index++;
-        }}
-      )
+        post.folders.forEach(async (folderId) => {
+          let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+          // TODO: account for other visibility types
+          if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
+            post.post_visibility = visibility.PUBLIC;
+            resolve(post);
+          }else if(post.folders.length <= index){
+            post.post_visibility = visibility.PRIVATE;
+            resolve(post);
+          }else{
+            index++;
+          }})}
+          else{
+            post.post_visibility = visibility.PRIVATE;
+            resolve(post);
+          }
+        
   });
   return check;
   }
