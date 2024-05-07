@@ -78,6 +78,19 @@ export class UsersService {
     );
   }
 
+  async findOneBasicUser(id: string): Promise<User | null> {
+    return getBasicUserInfo(
+      await this.usersRepository.findOne({
+        relations: {
+          links: true,
+        },
+        where: {
+          id: id,
+      }
+    })
+    );
+  }
+
   async findAllGroups(id: string) {
     const user: User = await this.usersRepository.findOne({
       where:{

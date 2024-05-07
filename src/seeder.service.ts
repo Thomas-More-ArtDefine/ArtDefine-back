@@ -52,6 +52,8 @@ export class SeederService {
 
   async seed() {
     console.log('--- Seeding started ---');
+    await this.dataSource.dropDatabase();
+    await this.dataSource.synchronize();
     await this.saveUsers();
     await this.saveGroups();
     await this.saveGroupsMembers();

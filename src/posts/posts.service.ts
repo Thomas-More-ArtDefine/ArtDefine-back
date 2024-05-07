@@ -20,7 +20,6 @@ export class PostsService {
   ) {}
 
   async createPost(createPostDto: CreatePostDto) {
-    
     createPostDto = await this.checkPostVisibilityUpload(createPostDto);
     
     return await this.postsRepository.save(createPostDto);

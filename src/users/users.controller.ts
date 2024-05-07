@@ -25,6 +25,12 @@ export class UsersController {
   findOne(@Param('id') id: string) {
     return this.usersService.findOneUser(id);
   }
+
+  @Get(':id/basic')
+  findOneBasic(@Param('id') id: string) {
+    return this.usersService.findOneBasicUser(id);
+  }
+
   @Get(':id/following')
   findFollowing(@Param('id') id: string) {
     return this.usersService.findAllFollowing(id);
