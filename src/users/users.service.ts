@@ -70,6 +70,7 @@ export class UsersService {
       await this.usersRepository.findOne({
         relations: {
           links: true,
+          folders: true
         },
         where: {
           id: id,
@@ -237,6 +238,7 @@ function getBasicUserInfo(user:User):User{
     cleanedUser.links = user.links;
     cleanedUser.user_deactivated = user.user_deactivated;
     cleanedUser.user_deactivation_date = user.user_deactivation_date;
+    cleanedUser.folders = user.folders;
     return cleanedUser;
   }
 
