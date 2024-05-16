@@ -9,11 +9,11 @@ async function bootstrap() {
   console.log(process.env.DB_USERNAME);
   console.log(process.env.DB_PASSWORD);
   console.log(process.env.DB_NAME);
-  
+
   const app = await NestFactory.create(AppModule);
   const seeder = app.get(SeederService);
   await seeder.seed();
   app.enableCors();
-  await app.listen(8080);
+  await app.listen(parseInt(process.env.PORT));
 }
 bootstrap();
