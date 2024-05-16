@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -37,28 +38,32 @@ import { RuleSeeder } from './database/seeds/rule.seeder';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'artdefine',
-      password: 'localDB',
-      database: 'artdefine',
-      entities: [
-        User,
-        Post,
-        Directmessage,
-        Group,
-        GroupMember,
-        Link,
-        Folder,
-        FeedbackQuestion,
-        FeedbackTemplate,
-        FeedbackResult,
-        GroupRank,
-        Rule,
-      ],
-      synchronize: true,
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      useFactory: () => (
+        {
+        type: 'postgres',
+        host: process.env.DB_HOST,
+        port: parseInt(process.env.PORT),
+        username: process.env.DB_USERNAME,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        entities: [
+          User,
+          Post,
+          Directmessage,
+          Group,
+          GroupMember,
+          Link,
+          Folder,
+          FeedbackQuestion,
+          FeedbackTemplate,
+          FeedbackResult,
+          GroupRank,
+          Rule,
+        ],
+        synchronize: true,
+      }),
     }),
     UsersModule,
     PostsModule,
