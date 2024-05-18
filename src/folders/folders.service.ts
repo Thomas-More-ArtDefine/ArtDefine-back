@@ -4,6 +4,7 @@ import { UpdateFolderDto } from './dto/update-folder.dto';
 import { Folder } from './entities/folder.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class FoldersService {
@@ -51,20 +52,36 @@ export class FoldersService {
     return this.foldersRepository.findOneBy({ id });
   }
 
-  findFoldersByGroupId(id: string) {
-    return this.foldersRepository.find({
+  async findFoldersByGroupId(id: string) {
+    return getBasicPosts(await this.foldersRepository.find({
       where: {
         group_id: id
+      },
+      join: {
+        alias: "folder",
+        leftJoinAndSelect: {
+            "posts": "folder.posts",
+            "user": "posts.user"
+        }
       }
-    });
+    }));
   }
 
-  findFoldersByUserId(id: string) {
-    return this.foldersRepository.find({
+  async findFoldersByUserId(id: string) {
+    const folders: Folder[] = getBasicPosts(await this.foldersRepository.find({
       where: {
         user_id: id
-      }
-    });
+      },
+      join: {
+          alias: "folder",
+          leftJoinAndSelect: {
+              "posts": "folder.posts",
+              "user": "posts.user"
+          }
+        }
+    }))
+
+    return folders
   }
 
   async getAllPostsInFolder(id: string){
@@ -93,4 +110,21 @@ export class FoldersService {
   async removeFolder(id: string) {
     return await this.foldersRepository.delete(id);
   }
+}
+
+function getBasicPosts(folders: Folder[]):Folder[]{
+  folders.forEach((folder)=>{
+    folder.posts.forEach((post)=>{
+      post.user = getBasicUserInfo(post.user);
+    })
+  })
+  return folders;
+}
+
+function getBasicUserInfo(user:User):User{
+  const cleanedUser: User = new User();
+  cleanedUser.user_name = user.user_name;
+  cleanedUser.user_subtitle = user.user_subtitle;
+  cleanedUser.user_profile_picture = user.user_profile_picture;
+  return cleanedUser;
 }

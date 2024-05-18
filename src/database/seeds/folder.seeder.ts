@@ -55,20 +55,7 @@ export class FolderSeeder implements Seeder {
         user: this.savedUsers[0],
         group: this.savedGroups[0],
         posts: [],
-      },
-      {
-        user_id: null,
-        group_id: null,
-        folder_order: 3,
-        folder_name: 'Folder 3',
-        folder_description: 'This is a folder',
-        folder_archived: false,
-        folder_visibility: visibility.PUBLIC,
-        id: null,
-        user: this.savedUsers[1],
-        group: this.savedGroups[0],
-        posts: [],
-      },
+      }
     ];
     return await repository.save(folders);
   }
