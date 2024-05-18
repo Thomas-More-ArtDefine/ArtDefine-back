@@ -54,7 +54,7 @@ export class PostSeeder implements Seeder {
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[0],
-        folders: [this.savedFolders[0]],
+        folders: [this.savedFolders[0],this.savedFolders[4]],
         feedback_template: null,
       },
       {
@@ -67,7 +67,7 @@ export class PostSeeder implements Seeder {
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[1],
-        folders: [this.savedFolders[0]],
+        folders: [this.savedFolders[1],this.savedFolders[4]],
         feedback_template: null,
       },
       {
@@ -80,7 +80,7 @@ export class PostSeeder implements Seeder {
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[1],
-        folders: [this.savedFolders[1]],
+        folders: [this.savedFolders[1],this.savedFolders[2]],
         feedback_template: null,
       },
       {
@@ -93,7 +93,7 @@ export class PostSeeder implements Seeder {
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[1],
-        folders: [this.savedFolders[1]],
+        folders: [this.savedFolders[1],this.savedFolders[5]],
         feedback_template: null,
       },
       {
@@ -106,7 +106,7 @@ export class PostSeeder implements Seeder {
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[2],
-        folders: [this.savedFolders[1]],
+        folders: [this.savedFolders[3],this.savedFolders[4],this.savedFolders[5]],
         feedback_template: null,
       },
     ];
