@@ -25,6 +25,9 @@ export class FeedbackQuestion {
     @Column({ type: 'uuid', name: 'template_id' })
     template_id: string;
 
+    @Column({ type: 'json', nullable: true })
+    content: JSON;
+
     @ManyToOne(type => FeedbackTemplate, template => template.questions)
     @JoinColumn({name: 'template_id'})
     template: FeedbackTemplate;
