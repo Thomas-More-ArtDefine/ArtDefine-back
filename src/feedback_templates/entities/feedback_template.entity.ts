@@ -8,7 +8,10 @@ export class FeedbackTemplate {
     @PrimaryGeneratedColumn()
     id: string;
 
-    @OneToMany(type => FeedbackQuestion, question => question.template)
+    @OneToMany(type => FeedbackQuestion, question => question.template, {
+        cascade: ['insert', 'update'], 
+        eager: true, 
+    } ) 
     questions: FeedbackQuestion[];
 
     @Column({ type: 'uuid', default: null, nullable: false })
