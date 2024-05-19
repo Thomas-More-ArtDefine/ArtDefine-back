@@ -27,9 +27,9 @@ export class PostsController {
     @Param('tag') tag: string,
     @Query('amount') amount:number,
     @Query('orderby') orderby: string, 
-    @Query('startfrom') startfrom?: string
+    @Query('skipAmount') skipAmount?: number
   ){
-    return this.postsService.findByTag(tag, amount, orderby, startfrom);
+    return this.postsService.findByTag(tag, amount, orderby, skipAmount);
   }
 
   @Get('feed/random')
