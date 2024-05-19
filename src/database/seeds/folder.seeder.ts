@@ -107,6 +107,19 @@ export class FolderSeeder implements Seeder {
         user: null,
         group: this.savedGroups[0],
         posts: [],
+      },
+      {
+        user_id: null,
+        group_id: null,
+        folder_order: 1,
+        folder_name: 'Inktastic - 2024',
+        folder_description: '',
+        folder_archived: false,
+        folder_visibility: visibility.PUBLIC,
+        id: null,
+        user: null,
+        group: this.savedGroups[1],
+        posts: [],
       }
       
     ];

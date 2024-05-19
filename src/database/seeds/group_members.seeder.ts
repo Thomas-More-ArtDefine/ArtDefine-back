@@ -40,6 +40,11 @@ export class GroupMembersSeeder implements Seeder {
         member_id: this.savedUsers[2].id,
         grouprank_id: null,
       },
+      {
+        group_id: this.savedGroups[1].id,
+        member_id: this.savedUsers[1].id,
+        grouprank_id: null,
+      },
     ];
     return await repository.save(group_members);
   }
