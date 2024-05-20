@@ -10,21 +10,31 @@ export class UserSeeder implements Seeder {
     _factoryManager: SeederFactoryManager,
   ): Promise<User[]> {
 
-    const profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/mock-profile-pic.png');
+    let profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/mock-pfp-2.png');
     const profilePicture = fs.readFileSync(profilePicturePath).toString('base64');
+    let bannerPicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_408368585.jpeg');
+    const bannerPicture = fs.readFileSync(bannerPicturePath).toString('base64');
+
+    profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_234285630.jpeg');
+    const profilePicture2 = fs.readFileSync(profilePicturePath).toString('base64');
+    bannerPicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_76809767.jpeg');
+    const bannerPicture2 = fs.readFileSync(bannerPicturePath).toString('base64');
+
+    profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_582643528.jpeg');
+    const profilePicture3 = fs.readFileSync(profilePicturePath).toString('base64');
 
     await dataSource.query('DELETE FROM "user";');
     const repository = dataSource.getRepository(User);
     const users: User[] = [
       {
-        user_name: 'Test User',
+        user_name: 'Maximus',
         user_email: 'testuser@example.com',
         user_password: 'testpassword',
         user_bio: 'This is a test user',
         user_profile_picture: `data:image/png;base64,${profilePicture}`,
-        user_banner_picture: '',
+        user_banner_picture:`data:image/jpeg;base64,${bannerPicture}`,
         user_pronouns: 'he/him',
-        user_subtitle: 'Test Subtitle',
+        user_subtitle: 'Passionate pencil collector.',
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
@@ -40,14 +50,14 @@ export class UserSeeder implements Seeder {
         rules: [],
       },
       {
-        user_name: 'User 2',
+        user_name: 'OliWii',
         user_email: 'user2@example.com',
         user_password: 'password2',
         user_bio: 'This is user 2',
-        user_profile_picture: `data:image/png;base64,${profilePicture}`,
-        user_banner_picture: '',
+        user_profile_picture: `data:image/jpeg;base64,${profilePicture2}`,
+        user_banner_picture: `data:image/jpeg;base64,${bannerPicture2}`,
         user_pronouns: 'she/her',
-        user_subtitle: 'User 2 Subtitle',
+        user_subtitle: 'Art student',
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,
@@ -63,14 +73,14 @@ export class UserSeeder implements Seeder {
         rules: [],
       },
       {
-        user_name: 'User 3',
+        user_name: 'LittleWizz',
         user_email: 'user3@example.com',
         user_password: 'password3',
         user_bio: 'This is user 3',
-        user_profile_picture: `data:image/png;base64,${profilePicture}`,
+        user_profile_picture: `data:image/jpeg;base64,${profilePicture3}`,
         user_banner_picture: '',
         user_pronouns: 'they/them',
-        user_subtitle: 'User 3 Subtitle',
+        user_subtitle: 'A goober who draws stuff.',
         user_creationdate: new Date(),
         user_deactivated: false,
         user_deactivation_date: null,

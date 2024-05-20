@@ -9,6 +9,7 @@ import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Like } from 'typeorm';
 
 
 @Injectable()
@@ -118,20 +119,41 @@ export class PostsService {
     return this.postsRepository.query(query);
   }
 
-  findByTag(tag: string, amount:number, orderby:string, startFrom?:string): Promise<Post[]> {
-    let query: string = "";
-    if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
-      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') AND id < "+startFrom+" ORDER BY id DESC LIMIT "+amount.toString()+";";
-    }else if (orderby === orderBy.DESC) {
-      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') ORDER BY id DESC LIMIT "+amount.toString()+";";
-    }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
-      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') AND id > "+startFrom+" ORDER BY id ASC LIMIT "+amount.toString()+";";
+  async findByTag(tag: string, amount:number, order:string, skipAmount?:number): Promise<[Post[], number]> {
+    // let query: string = "";
+    // const userstr: string = '"user"';
+    // if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
+    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') AND id < "+startFrom+" ORDER BY POST.id DESC LIMIT "+amount.toString()+";";
+    // }else if (orderby === orderBy.DESC) {
+    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') ORDER BY POST.id DESC LIMIT "+amount.toString()+";";
+    // }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
+    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') AND id > "+startFrom+" ORDER BY POST.id ASC LIMIT "+amount.toString()+";";
+    // }
+    // else{
+    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = U.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') ORDER BY POST.id ASC LIMIT "+amount.toString()+";";
+    // }
+    let filter: orderBy = orderBy.DESC;
+    if (order && order.toUpperCase() === orderBy.ASC) {
+      filter = orderBy.ASC;
     }
-    else{
-      query = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"') ORDER BY id ASC LIMIT "+amount.toString()+";";
-    }
+
+    const data = await this.postsRepository.findAndCount({
+      where: {post_tags: Like('%'+tag+',%')},
+      take: amount,
+      skip:skipAmount,
+      order: {
+        post_title: filter
+      },
+      relations:{
+        user: true
+      }
+    })
+
+    data[0].forEach(post => {
+       post.user = getBasicUserInfo(post.user);
+    });
     
-    return this.postsRepository.query(query);
+    return data;
   }
 
   async findOnePost(id: string): Promise<Post> {

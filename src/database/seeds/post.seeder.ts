@@ -24,8 +24,21 @@ export class PostSeeder implements Seeder {
     dataSource: DataSource,
     _factoryManager: SeederFactoryManager,
   ): Promise<Post[]> {
-    const artworkPath = path.join(__dirname, '../../../src/database/mock/assets/mock-artwork.png');
-    const artwork = `data:image/png;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+    let artworkPath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_408368585.jpeg');
+    const artwork1 = `data:image/jpeg;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+
+    artworkPath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_71266838.jpeg');
+    const artworklily = `data:image/jpeg;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+
+    artworkPath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_76809767.jpeg');
+    const artworkparis = `data:image/jpeg;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+
+    artworkPath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_141271349.jpeg');
+    const artworkocean = `data:image/jpeg;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+
+    artworkPath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_614142803.jpeg');
+    const artworkcat = `data:image/jpeg;base64,${fs.readFileSync(artworkPath).toString('base64')}`;
+
 
     await dataSource.query('DELETE FROM "post";');
     const repository = dataSource.getRepository(Post);
@@ -33,15 +46,67 @@ export class PostSeeder implements Seeder {
     const posts: Post[] = [
       {
         user_id: null,
-        post_content: artwork,
-        post_title: 'Post 1',
-        post_tags: 'tag1, tag2',
+        post_content: artwork1,
+        post_title: 'Road of Color',
+        post_tags: 'digital, fantasy, colorful',
         post_description: 'This is a post',
         post_visibility: visibility.PUBLIC,
         post_uploaddate: new Date(),
         id: null,
         user: this.savedUsers[0],
-        folders: [this.savedFolders[0]],
+        folders: [this.savedFolders[0],this.savedFolders[4]],
+        feedback_template: null,
+      },
+      {
+        user_id: null,
+        post_content: artworklily,
+        post_title: 'White Lily',
+        post_tags: 'flower, traditional, painting',
+        post_description: 'Still life study of a white lily flower.',
+        post_visibility: visibility.PUBLIC,
+        post_uploaddate: new Date(),
+        id: null,
+        user: this.savedUsers[1],
+        folders: [this.savedFolders[1],this.savedFolders[4]],
+        feedback_template: null,
+      },
+      {
+        user_id: null,
+        post_content: artworkparis,
+        post_title: 'Street in Paris',
+        post_tags: 'Paris, traditional, painting',
+        post_description: 'Oil painting.',
+        post_visibility: visibility.PUBLIC,
+        post_uploaddate: new Date(),
+        id: null,
+        user: this.savedUsers[1],
+        folders: [this.savedFolders[1],this.savedFolders[2]],
+        feedback_template: null,
+      },
+      {
+        user_id: null,
+        post_content: artworkocean,
+        post_title: 'Ocean of Paint',
+        post_tags: 'ocean, traditional, painting',
+        post_description: 'Oil painting of the ocean.',
+        post_visibility: visibility.PUBLIC,
+        post_uploaddate: new Date(),
+        id: null,
+        user: this.savedUsers[1],
+        folders: [this.savedFolders[1],this.savedFolders[5]],
+        feedback_template: null,
+      },
+      {
+        user_id: null,
+        post_content: artworkcat,
+        post_title: 'Shining Shadow',
+        post_tags: 'cat, digital, mystical',
+        post_description: 'Inspired by my sweet kitty Shadow.',
+        post_visibility: visibility.PUBLIC,
+        post_uploaddate: new Date(),
+        id: null,
+        user: this.savedUsers[2],
+        folders: [this.savedFolders[3],this.savedFolders[4],this.savedFolders[5]],
         feedback_template: null,
       },
     ];
