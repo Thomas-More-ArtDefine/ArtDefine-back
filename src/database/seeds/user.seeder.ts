@@ -31,7 +31,7 @@ export class UserSeeder implements Seeder {
         user_email: 'testuser@example.com',
         user_password: 'testpassword',
         user_bio: 'This is a test user',
-        user_profile_picture: `${profilePicture}`,
+        user_profile_picture: `data:image/jpeg;base64,${profilePicture}`,
         user_banner_picture:`${bannerPicture}`,
         user_pronouns: 'he/him',
         user_subtitle: 'Passionate pencil collector.',
