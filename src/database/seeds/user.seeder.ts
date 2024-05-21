@@ -12,16 +12,16 @@ export class UserSeeder implements Seeder {
 
     let profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/mock-pfp-2.png');
     const profilePicture = fs.readFileSync(profilePicturePath).toString('base64');
-    let bannerPicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_408368585.jpeg');
-    const bannerPicture = fs.readFileSync(bannerPicturePath).toString('base64');
+    const bannerPicture = "https://media.discordapp.net/attachments/1159147970038607933/1242385965054427137/AdobeStock_408368585.jpeg?ex=664da598&is=664c5418&hm=fbf8130fcb0ec01611fc5bb4ec9e862c140f3ecf65bed8f9914869cffd34887a&=&format=webp&width=1193&height=671";
+   
 
-    profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_234285630.jpeg');
-    const profilePicture2 = fs.readFileSync(profilePicturePath).toString('base64');
-    bannerPicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_76809767.jpeg');
-    const bannerPicture2 = fs.readFileSync(bannerPicturePath).toString('base64');
+    const profilePicture2= "https://media.discordapp.net/attachments/1159147970038607933/1242385963775426611/AdobeStock_234285630.jpeg?ex=664da598&is=664c5418&hm=42fc44e425834a25312784825e9fc5d3218e7a70bb1fd2bb7e953135246f5851&=&format=webp&width=661&height=670";
+    
 
-    profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/AdobeStock_582643528.jpeg');
-    const profilePicture3 = fs.readFileSync(profilePicturePath).toString('base64');
+    const bannerPicture2 = "https://media.discordapp.net/attachments/1159147970038607933/1242385962571399178/AdobeStock_76809767.jpeg?ex=664da597&is=664c5417&hm=3993707c5e777ff579464d41dc8e8340c942f31dbd5107cb806a6907a9f436ea&=&format=webp&width=894&height=671";
+
+
+    const profilePicture3 = "https://media.discordapp.net/attachments/1159147970038607933/1242385965293506590/AdobeStock_582643528.jpeg?ex=664da598&is=664c5418&hm=cf3876ff094adb57331b6ed4b37f532d703a87444464d4e636acae2a3d2db422&=&format=webp";
 
     await dataSource.query('DELETE FROM "user";');
     const repository = dataSource.getRepository(User);
