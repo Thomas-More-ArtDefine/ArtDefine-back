@@ -1,6 +1,11 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -13,109 +18,187 @@ import { Group } from 'src/groups/entities/group.entity';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>,
     private readonly foldersService: FoldersService,
   ) {}
 
+  /**
+   * @async
+   * @param createUserDto
+   * @returns User
+   * @throws {Error}
+   */
   async createUser(createUserDto: CreateUserDto) {
-    const savedUser: User = await this.usersRepository.save(createUserDto);
+    try {
+      const savedUser: User = await this.usersRepository.save(createUserDto);
 
-    // make general folder
-    let createFolderDto: CreateFolderDto = new CreateFolderDto();
-    createFolderDto.folder_name = "General";
-    createFolderDto.user =  savedUser;
-    createFolderDto.folder_visibility = visibility.PRIVATE;
-    await this.foldersService.createFolder(createFolderDto);
-    
-    return savedUser;
+      // make general folder
+      let createFolderDto: CreateFolderDto = new CreateFolderDto();
+      createFolderDto.folder_name = 'General';
+      createFolderDto.user = savedUser;
+      createFolderDto.folder_visibility = visibility.PRIVATE;
+      await this.foldersService.createFolder(createFolderDto);
+
+      return savedUser;
+    } catch (err) {
+      throw new Error('Something went wrong');
+    }
   }
 
+  /**
+   * @async
+   * @returns Promise<User[]>
+   * @throws {NotFoundException}
+   */
   async findAllUsers(): Promise<User[]> {
-    return getBasicUserInfoArray(await this.usersRepository.find());
-  }
-
-  async findAllFollowing(id: string) {
-    const user: User = await this.usersRepository.findOne({
-      relations: {
-        following: true,
-      },
-      where: {
-        id: id,
+    try {
+      return getBasicUserInfoArray(await this.usersRepository.find());
+    } catch (err) {
+      throw err;
     }
-  });
-  let following: User[] = [];
-
-  following = getBasicUserInfoArray(user.following);
-
-    return following;
   }
 
-  async findAllFollowers(id: string) {
-    const users: User[] = await this.usersRepository.find({
-      where: {
-        following: {id: id},
+  /**
+   * @async
+   * @param id
+   * @returns Promise<User[]>
+   * @throws {Error | NotFoundException}
+   */
+  async findAllFollowing(id: string): Promise<User[]> {
+    try {
+      const user: User = await this.usersRepository.findOne({
+        relations: {
+          following: true,
+        },
+        where: {
+          id: id,
+        },
+      });
+
+      if (user === undefined || user === null) {
+        throw new NotFoundException('User not found');
+      }
+
+      let following: User[] = [];
+
+      following = getBasicUserInfoArray(user.following);
+
+      return following;
+    } catch (err) {
+      throw err;
     }
-    });
-
-    let followers: User[] = getBasicUserInfoArray(users);
-
-    return followers;
   }
 
+  /**
+   * @async
+   * @param id
+   * @returns Promise<User[]>
+   * @throws {NotFoundException}
+   */
+  async findAllFollowers(id: string): Promise<User[]> {
+    try {
+      const users: User[] = await this.usersRepository.find({
+        where: {
+          following: { id: id },
+        },
+      });
+
+      if (users === undefined || users === null) {
+        throw new NotFoundException('User not found');
+      }
+
+      let followers: User[] = getBasicUserInfoArray(users);
+
+      return followers;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * @param id
+   * @returns User | null
+   * @throws {Error | NotFoundException}
+   */
   async findOneUser(id: string): Promise<User | null> {
-    return getProfileUserInfo(
-      await this.usersRepository.findOne({
-        relations: {
-          links: true,
-          folders: true
-        },
-        where: {
-          id: id,
-      }
-    })
-    );
+    try {
+      return getProfileUserInfo(
+        await this.usersRepository.findOne({
+          relations: {
+            links: true,
+            folders: true,
+          },
+          where: {
+            id: id,
+          },
+        }),
+      );
+    } catch (err) {
+      throw err;
+    }
   }
 
+  /**
+   * @param id
+   * @returns User | null
+   * @throws {Error | NotFoundException}
+   */
   async findOneBasicUser(id: string): Promise<User | null> {
-    return getBasicUserInfo(
-      await this.usersRepository.findOne({
-        relations: {
-          links: true,
-        },
+    try {
+      return getBasicUserInfo(
+        await this.usersRepository.findOne({
+          relations: {
+            links: true,
+          },
+          where: {
+            id: id,
+          },
+        }),
+      );
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * @param id
+   * @returns User | null
+   * @throws {Error | NotFoundException}
+   */
+  async findAllGroups(id: string) {
+    try {
+      const user: User = await this.usersRepository.findOne({
         where: {
           id: id,
+        },
+        join: {
+          alias: 'user',
+          leftJoinAndSelect: {
+            joinedGroups: 'user.groups',
+            group: 'joinedGroups.group',
+            group_members: 'group.members',
+          },
+        },
+      });
+
+      if (user === undefined || user === null) {
+        throw new NotFoundException('User not found');
       }
-    })
-    );
-  }
 
-  async findAllGroups(id: string) {
-    const user: User = await this.usersRepository.findOne({
-      where:{
-        id: id
-      },
-      join: {
-        alias: "user",
-        leftJoinAndSelect: {
-            "joinedGroups": "user.groups",
-            "group": "joinedGroups.group",
-            "group_members": "group.members"
-        }
+      if (user.groups === undefined || user.groups === null) {
+        return [];
       }
-    });
-
-    
-
-    return getBasicUserGroupInfo(user.groups);
+      return getBasicUserGroupInfo(user.groups);
+    } catch (err) {
+      throw err;
+    }
   }
-
 
   // async updateUser(id: string, updateUserDto: UpdateUserDto) {
-  //   let updateUser: User = await this.usersRepository.findOneBy({ id }); 
-    
+  //   let updateUser: User = await this.usersRepository.findOneBy({ id });
+
   //   updateUser.user_name = updateUserDto.user_name;
   //   updateUser.user_email = updateUserDto.user_email;
   //   updateUser.user_password = updateUserDto.user_password;
@@ -130,61 +213,141 @@ export class UsersService {
   //   return updateUser;
   // }
 
-  async updateFollowing(id: string, updateUserDto: UpdateUserDto) {
-    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
-    
-    updateUser.following = updateUserDto.following;
+  /**
+   * @async
+   * @param id
+   * @param updateUserDto
+   * @returns Promise<User>
+   * @throws {Error}
+   */
+  async updateFollowing(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User> {
+    try {
+      let updateUser: User = await this.usersRepository.findOneBy({ id });
 
-    this.usersRepository.save(updateUser);
-    return getBasicUserInfo(updateUser);
-  }
+      updateUser.following = updateUserDto.following;
 
-  async updateGeneralInfo(id: string, updateGeneralInfoDto: UpdateGeneralInfoDto) {
-    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
-    
-    updateUser.user_bio = updateGeneralInfoDto.user_bio;
-    updateUser.user_subtitle = updateGeneralInfoDto.user_subtitle;
-    updateUser.user_pronouns = updateGeneralInfoDto.user_pronouns;
-
-    this.usersRepository.save(updateUser);
-    return getBasicUserInfo(updateUser);
-  }
-
-  async deactivateUser(id: string){
-    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
-    if (updateUser.user_deactivated != true) {
-      updateUser.user_deactivated = true;
-      updateUser.user_deactivation_date = new Date();
-      return this.usersRepository.save(updateUser);
-    }else{
-      return "User [" + id + "] is already deactivated.";
+      this.usersRepository.save(updateUser);
+      return getBasicUserInfo(updateUser);
+    } catch (err) {
+      throw new Error(err);
     }
   }
 
-  async activateUser(id: string){
-    let updateUser: User = await this.usersRepository.findOneBy({ id }); 
+  /**
+   * @async
+   * @param id
+   * @param updateGeneralInfoDto
+   * @returns Promise<User>
+   * @throws {Error | NotFoundException}
+   */
+  async updateGeneralInfo(
+    id: string,
+    updateGeneralInfoDto: UpdateGeneralInfoDto,
+  ) {
+    try {
+      let updateUser: User = await this.usersRepository.findOneBy({ id });
+      if (updateUser === undefined || updateUser === null) {
+        throw new NotFoundException('User not found');
+      }
+
+      updateUser.user_bio = updateGeneralInfoDto.user_bio;
+      updateUser.user_subtitle = updateGeneralInfoDto.user_subtitle;
+      updateUser.user_pronouns = updateGeneralInfoDto.user_pronouns;
+
+      this.usersRepository.save(updateUser);
+      return getBasicUserInfo(updateUser);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw err;
+      } else {
+        throw new Error('Something went wrong saving the user info.');
+      }
+    }
+  }
+
+  /**
+   * @async
+   * @param id
+   * @returns Promise<User | string>
+   * @throws {Error | NotFoundException}
+   */
+  async deactivateUser(id: string): Promise<User | string> {
+    try {
+      let updateUser: User = await this.usersRepository.findOneBy({ id });
+      if (updateUser.user_deactivated != true) {
+        updateUser.user_deactivated = true;
+        updateUser.user_deactivation_date = new Date();
+        return this.usersRepository.save(updateUser);
+      } else {
+        return 'User [' + id + '] is already deactivated.';
+      }
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  /**
+   * @async
+   * @param id
+   * @returns Promise<User | string>
+   * @throws {Error | NotFoundException}
+   */
+  async activateUser(id: string) {
+    let updateUser: User = await this.usersRepository.findOneBy({ id });
     if (updateUser.user_deactivated != true) {
-      return "User [" + id + "] is already active.";
-    }else{
+      return 'User [' + id + '] is already active.';
+    } else {
       updateUser.user_deactivated = false;
       updateUser.user_deactivation_date = null;
       return this.usersRepository.save(updateUser);
     }
   }
 
-  async saveProfileImages(files: { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] },id: string) {
-    let user: User = await this.usersRepository.findOneBy({ id }); 
-    if (files.profile_picture != undefined) {
-      user.user_profile_picture = "[replace with cloud url or local path]/"+files.profile_picture[0].originalname;
+  /**
+   * @async
+   * @param files
+   * @param id
+   * @returns Promise<User>
+   * @throws {Error | NotFoundException}
+   */
+  async saveProfileImages(
+    files: {
+      profile_picture?: Express.Multer.File[];
+      banner_picture?: Express.Multer.File[];
+    },
+    id: string,
+  ) {
+    try {
+      let user: User = await this.usersRepository.findOneBy({ id });
+      if (files.profile_picture != undefined) {
+        user.user_profile_picture =
+          '[replace with cloud url or local path]/' +
+          files.profile_picture[0].originalname;
+      }
+      if (files.banner_picture != undefined) {
+        user.user_banner_picture =
+          '[replace with cloud url or local path]/' +
+          files.banner_picture[0].originalname;
+      }
+
+      return this.usersRepository.save(user);
+    } catch (err) {
+      throw new Error(err);
     }
-    if (files.banner_picture != undefined) {
-      user.user_banner_picture = "[replace with cloud url or local path]/"+files.banner_picture[0].originalname;
-    }
-    
-    return this.usersRepository.save(user);
   }
 
+  /**
+   * @async
+   * @param id
+   * @returns Promise<User>
+   * @throws {Error | NotFoundException}
+   */
   async removeUser(id: string) {
+    try{
+    
     let deleteUser: User = await this.usersRepository.findOne({
       relations: {
         received_messages: true,
@@ -192,95 +355,134 @@ export class UsersService {
       },
       where: {
         id: id,
+      },
+    });
+
+    if (deleteUser === undefined || deleteUser === null) {
+      throw new NotFoundException('User not found to delete');
     }
-  }); 
 
-  deleteUser.received_messages = [];
-  deleteUser.send_messages = [];
+    deleteUser.received_messages = [];
+    deleteUser.send_messages = [];
 
-  await this.usersRepository.save(deleteUser);
+    await this.usersRepository.save(deleteUser);
 
-    return await this.usersRepository.delete(id);;
+    return await this.usersRepository.delete(id);
+  }catch(err){
+    throw err;
+  }
+}
+}
+
+/**
+ *
+ * @param array
+ * @returns User[]
+ * @throws {NotFoundException}
+ */
+function getBasicUserInfoArray(array: User[]) {
+  try {
+    const cleanedArray: User[] = [];
+    array.forEach(function (user) {
+      let cleanedUser: User = getBasicUserInfo(user);
+
+      cleanedArray.push(cleanedUser);
+    });
+    return cleanedArray;
+  } catch (err) {
+    throw err;
   }
 }
 
-function getBasicUserInfoArray(array:User[]) {
-    const cleanedArray: User[] = [];
-    array.forEach( function (user){
-      let cleanedUser: User = getBasicUserInfo(user);
-  
-      cleanedArray.push(cleanedUser);
-    })
-    return cleanedArray;
+/**
+ *
+ * @param user
+ * @returns User
+ * @throws {NotFoundException}
+ */
+function getBasicUserInfo(user: User): User {
+  if (user === undefined || user === null) {
+    throw new NotFoundException('User not found');
   }
+  const cleanedUser: User = new User();
+  cleanedUser.id = user.id;
+  cleanedUser.user_name = user.user_name;
+  cleanedUser.user_subtitle = user.user_subtitle;
+  cleanedUser.user_profile_picture = user.user_profile_picture;
+  cleanedUser.user_deactivated = user.user_deactivated;
+  cleanedUser.user_deactivation_date = user.user_deactivation_date;
+  return cleanedUser;
+}
 
-function getBasicUserInfo(user:User):User{
-    const cleanedUser: User = new User();
-    cleanedUser.id = user.id;
-    cleanedUser.user_name = user.user_name;
-    cleanedUser.user_subtitle = user.user_subtitle;
-    cleanedUser.user_profile_picture = user.user_profile_picture;
-    cleanedUser.user_deactivated = user.user_deactivated;
-    cleanedUser.user_deactivation_date = user.user_deactivation_date;
-    return cleanedUser;
+/**
+ *
+ * @param user
+ * @returns
+ * @throws {Error}
+ */
+
+function getProfileUserInfo(user: User) {
+  if (user === undefined || user === null) {
+    throw new NotFoundException('User not found');
   }
+  const cleanedUser: User = new User();
+  cleanedUser.id = user.id;
+  cleanedUser.user_name = user.user_name;
+  cleanedUser.user_subtitle = user.user_subtitle;
+  cleanedUser.user_pronouns = user.user_pronouns;
+  cleanedUser.user_bio = user.user_bio;
+  cleanedUser.user_profile_picture = user.user_profile_picture;
+  cleanedUser.user_banner_picture = user.user_banner_picture;
+  cleanedUser.user_creationdate = user.user_creationdate;
+  cleanedUser.links = user.links;
+  cleanedUser.user_deactivated = user.user_deactivated;
+  cleanedUser.user_deactivation_date = user.user_deactivation_date;
+  cleanedUser.folders = user.folders;
+  return cleanedUser;
+}
 
-  function getProfileUserInfo(user:User){
-    const cleanedUser: User = new User();
-    cleanedUser.id = user.id;
-    cleanedUser.user_name = user.user_name;
-    cleanedUser.user_subtitle = user.user_subtitle;
-    cleanedUser.user_pronouns = user.user_pronouns;
-    cleanedUser.user_bio = user.user_bio;
-    cleanedUser.user_profile_picture = user.user_profile_picture;
-    cleanedUser.user_banner_picture = user.user_banner_picture;
-    cleanedUser.user_creationdate = user.user_creationdate;
-    cleanedUser.links = user.links;
-    cleanedUser.user_deactivated = user.user_deactivated;
-    cleanedUser.user_deactivation_date = user.user_deactivation_date;
-    cleanedUser.folders = user.folders;
-    return cleanedUser;
-  }
-
-  function getBasicUserGroupInfo(groups:GroupMember[]){
-    // let array: GroupMember[] = [];
+function getBasicUserGroupInfo(groups: GroupMember[]): Group[] {
+  try {
     let array: Group[] = [];
-    groups.forEach( (group) => {
-      // const cleanedGroupMember: GroupMember = new GroupMember();
-      // cleanedGroupMember.id = group.id;
-      // cleanedGroupMember.member_join_date = group.member_join_date;
-      // cleanedGroupMember.grouprank_id = group.grouprank_id;
-      // cleanedGroupMember.group_id = group.group_id;
-
+    groups.forEach((group) => {
       const cleanedGroup: Group = getBasicGroupInfo(group.group);
-
-      // cleanedGroupMember.group = cleanedGroup;
       array.push(cleanedGroup);
-    })
-    
-    
+    });
+
     return array;
+  } catch (err) {
+    throw new Error(err);
   }
+}
 
-  function getBasicGroupInfo(group:Group):Group{
-    const cleanedGroup: Group = new Group();
-    cleanedGroup.id = group.id;
-    cleanedGroup.group_name = group.group_name;
-    cleanedGroup.group_profile_picture = group.group_profile_picture;
-    cleanedGroup.group_userlimit = group.group_userlimit;
-    cleanedGroup.group_bio = group.group_bio;
-    cleanedGroup.group_setting_visibility = group.group_setting_visibility;
-    cleanedGroup.group_setting_join = group.group_setting_join;
-    // used for membercount in groupcards
-    if (group.members !== undefined && group.members !== null) {
-      group.members.forEach((member) => {
-        member.member_id = undefined;
-        member.grouprank_id = undefined;
-        member.member_join_date = undefined;
-        member.id = undefined;
-      })
-      cleanedGroup.members = group.members;
-    }
-    return cleanedGroup;
+
+/**
+ *
+ * @param group
+ * @returns Group
+ * @throws {Error}
+ */
+function getBasicGroupInfo(group: Group): Group {
+  if (group === undefined || group === null) {
+    throw new Error('Group is null or undefined');
   }
-
+  const cleanedGroup: Group = new Group();
+  cleanedGroup.id = group.id;
+  cleanedGroup.group_name = group.group_name;
+  cleanedGroup.group_profile_picture = group.group_profile_picture;
+  cleanedGroup.group_userlimit = group.group_userlimit;
+  cleanedGroup.group_bio = group.group_bio;
+  cleanedGroup.group_setting_visibility = group.group_setting_visibility;
+  cleanedGroup.group_setting_join = group.group_setting_join;
+  // used for membercount in groupcards
+  if (group.members !== undefined && group.members !== null) {
+    group.members.forEach((member) => {
+      member.member_id = undefined;
+      member.grouprank_id = undefined;
+      member.member_join_date = undefined;
+      member.id = undefined;
+    });
+    cleanedGroup.members = group.members;
+  }
+  return cleanedGroup;
+}

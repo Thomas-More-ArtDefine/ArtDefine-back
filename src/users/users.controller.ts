@@ -1,4 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, ParseFilePipe, MaxFileSizeValidator, FileTypeValidator, UploadedFiles } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseInterceptors,
+  UploadedFile,
+  ParseFilePipe,
+  MaxFileSizeValidator,
+  FileTypeValidator,
+  UploadedFiles,
+  HttpException,
+  HttpStatus,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -12,38 +29,86 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.createUser(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.createUser(createUserDto);
   }
 
   @Get()
-  findAll() {
-    return this.usersService.findAllUsers();
+  async findAll() {
+    try {
+      return await this.usersService.findAllUsers();
+    }catch(err){
+      if(err instanceof NotFoundException){
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error("Something went wrong");
+      }
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOneUser(id);
+  async findOne(@Param('id') id: string) {
+    try {
+      return await this.usersService.findOneUser(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Get(':id/basic')
-  findOneBasic(@Param('id') id: string) {
-    return this.usersService.findOneBasicUser(id);
+  async findOneBasic(@Param('id') id: string) {
+    try {
+      return await this.usersService.findOneBasicUser(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Get(':id/following')
-  findFollowing(@Param('id') id: string) {
-    return this.usersService.findAllFollowing(id);
+  async findFollowing(@Param('id') id: string) {
+    try {
+      return await this.usersService.findAllFollowing(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Get(':id/followers')
-  findFollowers(@Param('id') id: string) {
-    return this.usersService.findAllFollowers(id);
+  async findFollowers(@Param('id') id: string) {
+    try {
+      return await this.usersService.findAllFollowers(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Get(':id/groups')
-  findGroups(@Param('id') id: string) {
-    return this.usersService.findAllGroups(id);
+  async findGroups(@Param('id') id: string) {
+    try {
+      return await this.usersService.findAllGroups(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   // @Patch(':id')
@@ -52,44 +117,93 @@ export class UsersController {
   // }
 
   @Patch('general-info/:id')
-  updateGeneralInfo(@Param('id') id: string, @Body() updateGeneralInfoDto: UpdateGeneralInfoDto) {
-    return this.usersService.updateGeneralInfo(id, updateGeneralInfoDto);
+  async updateGeneralInfo(
+    @Param('id') id: string,
+    @Body() updateGeneralInfoDto: UpdateGeneralInfoDto,
+  ) {
+    try {
+      return await this.usersService.updateGeneralInfo(id, updateGeneralInfoDto);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Patch('follow/:id')
-  follow(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.updateFollowing(id, updateUserDto);
+  async follow(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    try {
+      return await this.usersService.updateFollowing(id, updateUserDto);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Patch('deactivate/:id')
-  deactivate(@Param('id') id: string) {
-    return this.usersService.deactivateUser(id);
+  async deactivate(@Param('id') id: string) {
+    try {
+      return await this.usersService.deactivateUser(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Patch('activate/:id')
-  activate(@Param('id') id: string) {
-    return this.usersService.activateUser(id);
+  async activate(@Param('id') id: string) {
+    try {
+      return await this.usersService.activateUser(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.removeUser(id);
+  async remove(@Param('id') id: string) {
+    try {
+      return await this.usersService.removeUser(id);
+    } catch (err) {
+      if (err instanceof NotFoundException) {
+        throw new HttpException(err.message, HttpStatus.NOT_FOUND);
+      } else {
+        throw new Error('Something went wrong');
+      }
+    }
   }
 
-  
   @Post('profile-images-upload/:id')
-  @UseInterceptors(FileFieldsInterceptor([
-    { name: 'profile_picture', maxCount: 1 },
-    { name: 'banner_picture', maxCount: 1 },
-  ]))
+  @UseInterceptors(
+    FileFieldsInterceptor([
+      { name: 'profile_picture', maxCount: 1 },
+      { name: 'banner_picture', maxCount: 1 },
+    ]),
+  )
   // TODO: save files to cloud
-  uploadFile(
-    @Param('id') id: string, 
+  async uploadFile(
+    @Param('id') id: string,
     @UploadedFiles(
       ProfileFilesSizeValidationPipe,
-      ProfileFilesTypesValidationPipe
-  ) files:  { profile_picture?: Express.Multer.File[], banner_picture?: Express.Multer.File[] }) {
-    this.usersService.saveProfileImages(files,id);
+      ProfileFilesTypesValidationPipe,
+    )
+    files: {
+      profile_picture?: Express.Multer.File[];
+      banner_picture?: Express.Multer.File[];
+    },
+  ) {
+    await this.usersService.saveProfileImages(files, id);
     return files;
   }
 }
