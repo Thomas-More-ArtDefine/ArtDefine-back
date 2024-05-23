@@ -341,8 +341,8 @@ export class UsersService {
 
   /**
    * @async
-   * @param id
-   * @returns Promise<User>
+   * @param string
+   * @returns {Promise<User>}
    * @throws {Error | NotFoundException}
    */
   async removeUser(id: string) {
@@ -416,8 +416,8 @@ function getBasicUserInfo(user: User): User {
 
 /**
  *
- * @param user
- * @returns
+ * @param {user} : User
+ * @returns 
  * @throws {Error}
  */
 

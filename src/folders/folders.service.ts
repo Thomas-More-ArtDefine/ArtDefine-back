@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { Folder } from './entities/folder.entity';
@@ -13,11 +13,19 @@ export class FoldersService {
     private readonly foldersRepository: Repository<Folder>,
   ) {}
 
+
+  /**
+   * @async
+   * @param createFolderDto 
+   * @returns Promise<Folder>
+   * @throws NotAcceptableException
+   */
   async createFolder(createFolderDto: CreateFolderDto) {
+    try{
     if ((createFolderDto.group == null) && (createFolderDto.user == null)) {
-      return "ERROR-folder needs to be assigned to an owner.";
+      throw new NotAcceptableException("ERROR-folder needs to be assigned to an owner.");
     }else if ((createFolderDto.group != null) && (createFolderDto.user != null)) {
-      return "ERROR-folder can only have one owner.";
+      throw new NotAcceptableException("ERROR-folder can only have one owner.");
     }else{
       let queryResult;
       if (createFolderDto.group !== null && createFolderDto.group !== undefined) {
@@ -34,7 +42,6 @@ export class FoldersService {
             user_id: createFolderDto.user.id,
           }
         });
-        
       }
 
       const count: any  = await queryResult;
@@ -42,14 +49,30 @@ export class FoldersService {
       this.foldersRepository.save(createFolderDto);
       return createFolderDto;
     }
-  }
+  }catch(err){
+    throw err;
+  }};
 
   findAllFolders() {
     return this.foldersRepository.find();
   }
 
-  findOneFolder(id: string) {
-    return this.foldersRepository.findOneBy({ id });
+  /**
+   * @async
+   * @param id 
+   * @returns Promise<Folder>
+   * @throws NotFoundException
+   */
+  async findOneFolder(id: string) {
+    try {
+      const folder: Folder = await this.foldersRepository.findOneBy({ id });
+      if (folder == null || folder == undefined) {
+        throw new NotFoundException("Folder not found");
+      }
+      return folder;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async findFoldersByGroupId(id: string) {
