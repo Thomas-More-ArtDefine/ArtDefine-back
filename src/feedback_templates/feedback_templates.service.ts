@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreateFeedbackTemplateDto } from './dto/create-feedback_template.dto';
 import { UpdateFeedbackTemplateDto } from './dto/update-feedback_template.dto';
 import { FeedbackTemplate } from './entities/feedback_template.entity';
@@ -21,14 +21,39 @@ export class FeedbackTemplatesService {
     return this.templatesRepository.find();
   }
 
-  findOneTemplate(id: string) {
-    return this.templatesRepository.findOneBy({ id });
+
+  /**
+   * @async
+   * @param id 
+   * @returns Promise<FeedbackTemplate>
+   * @throws {NotFoundException}
+   */
+  async findOneTemplate(id: string) : Promise<FeedbackTemplate> {
+    const template: FeedbackTemplate = await this.templatesRepository.findOneBy({ id });
+    if (!template) {
+      throw new NotFoundException(`Template with id ${id} not found.`);
+    }
+    return template;
   }
 
+
+  /**
+   * @async
+   * @param id 
+   * @param updateFeedbackTemplateDto 
+   * @returns FeedbackTemplate
+   * @throws {NotFoundException | NotAcceptableException}
+   */
   async updateTemplate(id: string, updateFeedbackTemplateDto: UpdateFeedbackTemplateDto) {
     let updateTemplate: FeedbackTemplate = await this.templatesRepository.findOneBy({ id });
+    if (!updateTemplate) {
+      throw new NotFoundException(`Template with id ${id} not found.`);
+    }
+    if (!updateFeedbackTemplateDto) {
+      throw new NotAcceptableException(`No data to update.`);
+    }
     updateTemplate.questions = updateFeedbackTemplateDto.questions;
-    this.templatesRepository.save(updateTemplate);
+    await this.templatesRepository.save(updateTemplate);
     return updateTemplate;
   }
 

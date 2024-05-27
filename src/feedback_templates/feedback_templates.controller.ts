@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpException, HttpStatus } from '@nestjs/common';
 import { FeedbackTemplatesService } from './feedback_templates.service';
 import { CreateFeedbackTemplateDto } from './dto/create-feedback_template.dto';
 import { UpdateFeedbackTemplateDto } from './dto/update-feedback_template.dto';
@@ -18,14 +18,32 @@ export class FeedbackTemplatesController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.feedbackTemplatesService.findOneTemplate(id);
+  async findOne(@Param('id') id: string) {
+    try{
+    return await this.feedbackTemplatesService.findOneTemplate(id);
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      return new HttpException(error.message, HttpStatus.NOT_FOUND);
+    }
+    console.log(error);
+    return new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFeedbackTemplateDto: UpdateFeedbackTemplateDto) {
-    return this.feedbackTemplatesService.updateTemplate(id, updateFeedbackTemplateDto);
+  async update(@Param('id') id: string, @Body() updateFeedbackTemplateDto: UpdateFeedbackTemplateDto) {
+    try{
+    return await this.feedbackTemplatesService.updateTemplate(id, updateFeedbackTemplateDto);
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    } else if (error instanceof HttpException) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+    console.log(error);
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
+}
 
   @Delete(':id')
   remove(@Param('id') id: string) {

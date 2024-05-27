@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotAcceptableException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFolderDto } from './dto/create-folder.dto';
 import { UpdateFolderDto } from './dto/update-folder.dto';
 import { Folder } from './entities/folder.entity';
@@ -13,34 +17,57 @@ export class FoldersService {
     private readonly foldersRepository: Repository<Folder>,
   ) {}
 
+  /**
+   * @async
+   * @param createFolderDto
+   * @returns Promise<Folder>
+   * @throws {error | NotAcceptableException}
+   */
   async createFolder(createFolderDto: CreateFolderDto) {
-    if ((createFolderDto.group == null) && (createFolderDto.user == null)) {
-      return "ERROR-folder needs to be assigned to an owner.";
-    }else if ((createFolderDto.group != null) && (createFolderDto.user != null)) {
-      return "ERROR-folder can only have one owner.";
-    }else{
-      let queryResult;
-      if (createFolderDto.group !== null && createFolderDto.group !== undefined) {
-        queryResult = this.foldersRepository.findAndCount({
-          where: {
-            group_id: createFolderDto.group.id,
-          }
-        });
-      }
-      
-      else{
-        queryResult = this.foldersRepository.findAndCount({
-          where: {
-            user_id: createFolderDto.user.id,
-          }
-        });
-        
-      }
+    try {
+      if (createFolderDto.group == null && createFolderDto.user == null) {
+        throw new NotAcceptableException(
+          'folder needs to be assigned to an owner.',
+        );
+      } else if (
+        createFolderDto.group != null &&
+        createFolderDto.user != null
+      ) {
+        throw new NotAcceptableException(
+          'folder can only have one owner.',
+        );
+      } else {
+        let queryResult;
+        if (
+          createFolderDto.group !== null &&
+          createFolderDto.group !== undefined
+        ) {
+          queryResult = this.foldersRepository.findAndCount({
+            where: {
+              group_id: createFolderDto.group.id,
+            },
+          });
+        } else {
+          queryResult = this.foldersRepository.findAndCount({
+            where: {
+              user_id: createFolderDto.user.id,
+            },
+          });
+        }
 
-      const count: any  = await queryResult;
-      createFolderDto.folder_order = count[1] + 1;
-      this.foldersRepository.save(createFolderDto);
-      return createFolderDto;
+        const count: any = await queryResult;
+        createFolderDto.folder_order = count[1] + 1;
+        this.foldersRepository.save(createFolderDto);
+        return createFolderDto;
+      }
+    } catch (error) {
+      if (error instanceof NotAcceptableException) {
+        throw new NotAcceptableException(
+          'Error creating folder :' + error.message,
+        );
+      } else {
+        throw new Error('Error creating folder :' + error);
+      }
     }
   }
 
@@ -48,56 +75,137 @@ export class FoldersService {
     return this.foldersRepository.find();
   }
 
-  findOneFolder(id: string) {
-    return this.foldersRepository.findOneBy({ id });
-  }
-
-  async findFoldersByGroupId(id: string) {
-    return getBasicPosts(await this.foldersRepository.find({
-      where: {
-        group_id: id
-      },
-      join: {
-        alias: "folder",
-        leftJoinAndSelect: {
-            "posts": "folder.posts",
-            "user": "posts.user"
-        }
+  /**
+   * @async
+   * @param id
+   * @returns Promise<Folder>
+   * @throws NotFoundException
+   */
+  async findOneFolder(id: string) {
+    try {
+      const folder: Folder = await this.foldersRepository.findOneBy({ id });
+      if (folder == null || folder == undefined) {
+        throw new NotFoundException('Folder not found');
       }
-    }));
+      return folder;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException(
+          'Error finding folder by ID' + error.message,
+        );
+      } else {
+        throw new Error('Error finding folder by ID :' + error);
+      }
+    }
   }
 
+  /**
+   * @async
+   * @param id
+   * @returns Promise<Folder[]>
+   * @throws {NotAcceptableException | Error}
+   */
+  async findFoldersByGroupId(id: string) {
+    try {
+      return getBasicPosts(
+        await this.foldersRepository.find({
+          where: {
+            group_id: id,
+          },
+          join: {
+            alias: 'folder',
+            leftJoinAndSelect: {
+              posts: 'folder.posts',
+              user: 'posts.user',
+            },
+          },
+        }),
+      );
+    } catch (error) {
+      if (error instanceof NotAcceptableException) {
+        throw new NotAcceptableException(
+          'Error getting basic posts :' + error.message,
+        );
+      } else {
+        throw new Error('Error getting basic posts :' + error);
+      }
+    }
+  }
+
+
+  /**
+   * @async
+   * @param id
+   * @returns Promise<Folder[]>
+   * @throws {NotAcceptableException | Error}
+   */
   async findFoldersByUserId(id: string) {
-    const folders: Folder[] = getBasicPosts(await this.foldersRepository.find({
-      where: {
-        user_id: id
-      },
-      join: {
-          alias: "folder",
-          leftJoinAndSelect: {
-              "posts": "folder.posts",
-              "user": "posts.user"
-          }
-        }
-    }))
+    try {
+      const folders: Folder[] = getBasicPosts(
+        await this.foldersRepository.find({
+          where: {
+            user_id: id,
+          },
+          join: {
+            alias: 'folder',
+            leftJoinAndSelect: {
+              posts: 'folder.posts',
+              user: 'posts.user',
+            },
+          },
+        }),
+      );
 
-    return folders
+      return folders;
+    } catch (error) {
+      if (error instanceof NotAcceptableException) {
+        throw new NotAcceptableException(
+          'Error getting basic posts :' + error.message,
+        );
+      } else {
+        throw new Error('Error getting basic posts :' + error);
+      }
+    }
   }
 
-  async getAllPostsInFolder(id: string){
+  /**
+   * @async
+   * @param id
+   * @returns Promise<Post[]>
+   * @throws NotFoundException
+   * @throws {Error}
+   * @throws {NotAcceptableException}
+   */
+
+  async getAllPostsInFolder(id: string) {
     const folder: Folder = await this.foldersRepository.findOne({
       where: {
-        id: id
+        id: id,
       },
       relations: {
-        posts: true
-      }
+        posts: true,
+      },
     });
+
+    if (!folder) {
+      throw new NotFoundException('Folder not found');
+    }
 
     return folder.posts;
   }
 
+
+  /**
+   * @async
+   * @param id
+   * @param updateFolderDto
+   * @returns Promise<Folder>
+   * @throws {NotAcceptableException}
+    */
   async updateFolder(id: string, updateFolderDto: UpdateFolderDto) {
+    if (!updateFolderDto) {
+      throw new NotAcceptableException('No update folder data given');
+    }
     let updateFolder: Folder = await this.foldersRepository.findOneBy({ id });
     updateFolder.folder_name = updateFolderDto.folder_name;
     updateFolder.folder_description = updateFolderDto.folder_bio;
@@ -112,16 +220,44 @@ export class FoldersService {
   }
 }
 
-function getBasicPosts(folders: Folder[]):Folder[]{
-  folders.forEach((folder)=>{
-    folder.posts.forEach((post)=>{
-      post.user = getBasicUserInfo(post.user);
-    })
-  })
-  return folders;
+/**
+ *
+ * @param folders
+ * @returns Folder[]
+ * @throws {NotAcceptableException | Error}
+ */
+function getBasicPosts(folders: Folder[]): Folder[] {
+  try {
+    if (!folders) {
+      throw new NotAcceptableException('No folders given');
+    }
+    folders.forEach((folder) => {
+      folder.posts.forEach((post) => {
+        post.user = getBasicUserInfo(post.user);
+      });
+    });
+    return folders;
+  } catch (error) {
+    if (error instanceof NotAcceptableException) {
+      throw new NotAcceptableException(
+        'Error getting basic posts :' + error.message,
+      );
+    } else {
+      throw new Error('Error getting basic posts :' + error);
+    }
+  }
 }
 
-function getBasicUserInfo(user:User):User{
+/**
+ *
+ * @param user
+ * @returns User
+ * @throws {NotAcceptableException}
+ */
+function getBasicUserInfo(user: User): User {
+  if (!user) {
+    throw new NotAcceptableException('No user given');
+  }
   const cleanedUser: User = new User();
   cleanedUser.user_name = user.user_name;
   cleanedUser.user_subtitle = user.user_subtitle;

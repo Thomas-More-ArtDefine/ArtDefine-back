@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -9,55 +9,95 @@ export class PostsController {
 
   @Post()
   async create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.createPost(createPostDto);
+    try{
+    return await this.postsService.createPost(createPostDto);
+    }catch(error){
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get()
-  findAll() {
-    return this.postsService.findAllPosts();
+  async findAll() {
+    try{
+    return await this.postsService.findAllPosts();
+  }catch(error){
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   }
 
   @Get('tag/all/:tag')
-  getAllByTag(@Param('tag') tag: string){
-    return this.postsService.findAllByTag(tag);
+  async getAllByTag(@Param('tag') tag: string){
+    try{
+    return await this.postsService.findAllByTag(tag);
+  }catch(error){
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   }
 
   @Get('tag/:tag')
-  getByTag(
+  async getByTag(
     @Param('tag') tag: string,
     @Query('amount') amount:number,
     @Query('orderby') orderby: string, 
     @Query('skipAmount') skipAmount?: number
   ){
-    return this.postsService.findByTag(tag, amount, orderby, skipAmount);
+    try{
+    return await this.postsService.findByTag(tag, amount, orderby, skipAmount);
+  }catch(error){
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   }
 
   @Get('feed/random')
-  getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
+  async getRandomFeed( @Query('amount') amount:number, @Query('exclude') exclude: string) {
+    try{
     if (amount !== undefined) {
-      return this.postsService.findRandomPosts(amount, exclude);
+      return await this.postsService.findRandomPosts(amount, exclude);
     }else{
-      return this.postsService.findRandomPosts(10, exclude);
+      return await this.postsService.findRandomPosts(10, exclude);
     }
+  }catch(error){
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  };
   }
 
   @Get('user/:id')
-  findByUserId(@Param('id') id: string) {
-    return this.postsService.findAllByUserId(id);
+  async findByUserId(@Param('id') id: string) {
+    try{
+    return await this.postsService.findAllByUserId(id);
+  }catch(error){
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOnePost(id);
+  async findOne(@Param('id') id: string) {
+    try{
+    return await this.postsService.findOnePost(id);
+  }catch(error){
+    if (error instanceof NotFoundException) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    } else {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.updatePost(id, updatePostDto);
+  async update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
+    try{
+    return await this.postsService.updatePost(id, updatePostDto);
+  }catch(error){
+    if (error instanceof NotFoundException) {
+      throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+    } else {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.removePost(id);
+  async remove(@Param('id') id: string) {
+    return await this.postsService.removePost(id);
   }
 }

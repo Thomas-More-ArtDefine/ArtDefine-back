@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -11,7 +11,6 @@ import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Like } from 'typeorm';
 
-
 @Injectable()
 export class PostsService {
   constructor(
@@ -20,232 +19,381 @@ export class PostsService {
     private readonly foldersService: FoldersService,
   ) {}
 
-  async createPost(createPostDto: CreatePostDto) {
-    createPostDto = await this.checkPostVisibilityUpload(createPostDto);
-    
-    return await this.postsRepository.save(createPostDto);
+  /**
+   * @async
+   * @params {CreatePostDto}
+   * @returns {Promise<Post>}
+   * @throws {Error}
+   */
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+    try {
+      createPostDto = await this.checkPostVisibilityUpload(createPostDto);
+
+      return await this.postsRepository.save(createPostDto);
+    } catch (err) {
+      throw err;
+    }
   }
 
-  async checkPostVisibilityUpload(post: CreatePostDto):Promise<CreatePostDto>{
-    var check:Promise<CreatePostDto> = new Promise((resolve, reject) => {
-      if (post.folders !== undefined && post.folders.length !== 0) {
-        let index = 1;
-        post.folders.forEach(async (folderId) => {
-          let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
-          // TODO: account for other visibility types
-          if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
-            post.post_visibility = visibility.PUBLIC;
-            resolve(post);
-          }else if(post.folders.length <= index){
-            post.post_visibility = visibility.PRIVATE;
-            resolve(post);
-          }else{
-            index++;
-          }})}
-          else{
-            post.post_visibility = visibility.PRIVATE;
-            resolve(post);
-          }
-        
-  });
-  return check;
+  /**
+   * @async
+   * @params {CreatePostDto}
+   * @returns {Promise<CreatePostDto>}
+   * @throws {Error}
+   */
+  async checkPostVisibilityUpload(post: CreatePostDto): Promise<CreatePostDto> {
+    try {
+      var check: Promise<CreatePostDto> = new Promise((resolve, reject) => {
+        if (post.folders !== undefined && post.folders.length !== 0) {
+          let index = 1;
+          post.folders.forEach(async (folderId) => {
+            let folder: Folder = await this.foldersService.findOneFolder(
+              folderId.id,
+            );
+            // TODO: account for other visibility types
+            if (
+              folder.folder_visibility === visibility.PUBLIC &&
+              post.post_visibility != visibility.PUBLIC
+            ) {
+              post.post_visibility = visibility.PUBLIC;
+              resolve(post);
+            } else if (post.folders.length <= index) {
+              post.post_visibility = visibility.PRIVATE;
+              resolve(post);
+            } else {
+              index++;
+            }
+          });
+        } else {
+          post.post_visibility = visibility.PRIVATE;
+          resolve(post);
+        }
+      });
+      return check;
+    } catch (err) {
+      throw err;
+    }
   }
 
+  /**
+   * @async
+   * @returns {Promise<Post[]>}
+   * @throws {Error}
+   */
   async findAllPosts(): Promise<Post[]> {
     return await this.postsRepository.find();
   }
 
-  async findRandomPosts(numberPosts: number, exclude?:string): Promise<Post[]> {
-    const totalNumberPosts: number = await this.postsRepository.count();
-    
-    let feedArray: Post[] = [];
-    let usedIds: string[] = [];
-    if (exclude != undefined) {
-      usedIds = exclude.split(',');
-      
-    }
+  /**
+   * @async
+   * @returns {Promise<Post[]>}
+   * @throws {Error}
+   */
+  async findRandomPosts(
+    numberPosts: number,
+    exclude?: string,
+  ): Promise<Post[]> {
+    try {
+      const totalNumberPosts: number = await this.postsRepository.count();
 
-    // return empty array when no posts are found
-    if (totalNumberPosts === 0) {
-      return [];
-    }
+      let feedArray: Post[] = [];
+      let usedIds: string[] = [];
+      if (exclude != undefined) {
+        usedIds = exclude.split(',');
+      }
 
-    let index = 0
-    for (let timeout = 0; timeout < 1000; timeout++) {
-      let id: string = (Math.floor(Math.random() * totalNumberPosts)+1).toString();
-      
-      if (!usedIds.includes(id)) {
-        usedIds.push(id);
-      
-        let post:Post = await this.postsRepository.findOne({
-          where: {
-            id: id,
-        },
-        relations: {
-          user: true
-        }
-        });
+      // return empty array when no posts are found
+      if (totalNumberPosts === 0) {
+        return [];
+      }
 
-        if (post === null) {
-          break;
-        }
+      let index = 0;
+      for (let timeout = 0; timeout < 1000; timeout++) {
+        let id: string = (
+          Math.floor(Math.random() * totalNumberPosts) + 1
+        ).toString();
 
-        post.user = getBasicUserInfo(post.user);
+        if (!usedIds.includes(id)) {
+          usedIds.push(id);
 
-        if (post.post_visibility === visibility.PUBLIC) {
-          feedArray.push(post);
-          index++
-        }
-        if (index >= numberPosts) {
-          break;
+          let post: Post = await this.postsRepository.findOne({
+            where: {
+              id: id,
+            },
+            relations: {
+              user: true,
+            },
+          });
+
+          if (post === null) {
+            break;
+          }
+
+          post.user = getBasicUserInfo(post.user);
+
+          if (post.post_visibility === visibility.PUBLIC) {
+            feedArray.push(post);
+            index++;
+          }
+          if (index >= numberPosts) {
+            break;
+          }
         }
       }
+      return feedArray;
+    } catch (err) {
+      throw err;
     }
-    return feedArray;
   }
 
+  /**
+   * @async
+   * @returns {Promise<Post[]>}
+   * @throws {Error}
+   */
   findAllByUserId(userid: string): Promise<Post[]> {
-    return this.postsRepository.find(
-      {
+    try {
+      return this.postsRepository.find({
         where: {
           user_id: userid,
-      },
-      }
-    );
-  }
-
-  findAllByTag(tag: string): Promise<Post[]> {
-    const query:string = "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+"');";
-    return this.postsRepository.query(query);
-  }
-
-  async findByTag(tag: string, amount:number, order:string, skipAmount?:number): Promise<[Post[], number]> {
-    // let query: string = "";
-    // const userstr: string = '"user"';
-    // if (orderby === orderBy.DESC && startFrom !== undefined && startFrom !== null) {
-    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') AND id < "+startFrom+" ORDER BY POST.id DESC LIMIT "+amount.toString()+";";
-    // }else if (orderby === orderBy.DESC) {
-    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') ORDER BY POST.id DESC LIMIT "+amount.toString()+";";
-    // }else if (orderby === orderBy.ASC && startFrom !== undefined && startFrom !== null) {
-    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = u.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') AND id > "+startFrom+" ORDER BY POST.id ASC LIMIT "+amount.toString()+";";
-    // }
-    // else{
-    //   query = "SELECT * FROM POST FULL JOIN "+userstr+" u on user_id = U.ID WHERE to_tsvector(post_tags) @@ to_tsquery('"+tag+",') ORDER BY POST.id ASC LIMIT "+amount.toString()+";";
-    // }
-    let filter: orderBy = orderBy.DESC;
-    if (order && order.toUpperCase() === orderBy.ASC) {
-      filter = orderBy.ASC;
+        },
+      });
+    } catch (err) {
+      throw err;
     }
-
-    const data = await this.postsRepository.findAndCount({
-      where: {post_tags: Like('%'+tag+',%')},
-      take: amount,
-      skip:skipAmount,
-      order: {
-        post_title: filter
-      },
-      relations:{
-        user: true
-      }
-    })
-
-    data[0].forEach(post => {
-       post.user = getBasicUserInfo(post.user);
-    });
-    
-    return data;
   }
 
+
+  /**
+   * @async
+   * @returns {Promise<Post[]>}
+   * @throws {Error}
+   */
+  findAllByTag(tag: string): Promise<Post[]> {
+    try{
+    const query: string =
+      "SELECT * FROM POST WHERE to_tsvector(post_tags) @@ to_tsquery('" +
+      tag +
+      "');";
+    return this.postsRepository.query(query);
+  }catch(err){
+    throw new Error('Error while finding all by tag: ' + err);
+  };
+  }
+
+  /**
+   * @async
+   * @param {string} tag
+   * @param {number} amount
+   * @param {string} order
+   * @param {number} [skipAmount]
+   * @returns {Promise<[Post[], number]>}
+   * @throws {Error}
+   */
+  async findByTag(
+    tag: string,
+    amount: number,
+    order: string,
+    skipAmount?: number,
+  ): Promise<[Post[], number]> {
+    try {
+      let filter: orderBy = orderBy.DESC;
+      if (order && order.toUpperCase() === orderBy.ASC) {
+        filter = orderBy.ASC;
+      }
+
+      const data = await this.postsRepository.findAndCount({
+        where: { post_tags: Like('%' + tag + ',%') },
+        take: amount,
+        skip: skipAmount,
+        order: {
+          post_title: filter,
+        },
+        relations: {
+          user: true,
+        },
+      });
+
+      data[0].forEach((post) => {
+        post.user = getBasicUserInfo(post.user);
+      });
+
+      return data;
+    } catch (err) {
+      throw new Error('Error while finding by tab: ' + err);
+    }
+  }
+
+
+  /**
+   * @async
+   * @param string
+   * @returns {Promise<Post>}
+   * @throws {Error | NotFoundException}
+   */
   async findOnePost(id: string): Promise<Post> {
-    let post: Post = await this.postsRepository.findOne({
-      where: {
-        id: id,
-    },
-    join: {
-        alias: "post",
-        leftJoinAndSelect: {
-            "folders": "post.folders",
-            "group": "folders.group",
-            "group_members": "group.members"
-        }
-    },
-    });
+    try {
+      let post: Post = await this.postsRepository.findOne({
+        where: {
+          id: id,
+        },
+        join: {
+          alias: 'post',
+          leftJoinAndSelect: {
+            folders: 'post.folders',
+            group: 'folders.group',
+            group_members: 'group.members',
+          },
+        },
+      });
 
-    post.folders.forEach((folder) => {
-      if (folder.group_id !== undefined && folder.group_id !== null) {
-        folder.group = getBasicGroupInfo(folder.group);
+
+      if (post === undefined || post === null) {
+        console.log('Post not found');
+        throw new NotFoundException('Post not found');
       }
-    })
 
-    return post;
+
+      post.folders.forEach((folder) => {
+        if (folder.group_id !== undefined && folder.group_id !== null) {
+          folder.group = getBasicGroupInfo(folder.group);
+        }
+      });
+
+      return post;
+    } catch (err) {
+      throw new Error('Error while finding one post: ' + err);
+    }
   }
 
+
+
+  /**
+   * @async
+   * @param id
+   * @param updatePostDto
+   * @returns {Promise<Post>}
+   * @throws {Error | NotFoundException}
+   */
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
+    try{
     if (updatePostDto.folders !== undefined) {
       updatePostDto = await this.checkPostVisibilityUpdate(updatePostDto);
     }
     let updatePost: Post = await this.postsRepository.findOne({
       where: {
         id: id,
-    },relations: {
-        folders: true
-      }});
+      },
+      relations: {
+        folders: true,
+      },
+    });
+
+    if (updatePost === undefined || updatePost === null) {
+      throw new NotFoundException('Post not found');
+    }
+
     updatePost.post_description = updatePostDto.post_description;
     updatePost.post_tags = updatePostDto.post_tags;
-    updatePost.post_title = updatePostDto.post_title; 
+    updatePost.post_title = updatePostDto.post_title;
     updatePost.post_visibility = updatePostDto.post_visibility;
-    if (updatePostDto.folders !== undefined) { 
-    updatePost.folders = await this.updateFolders(updatePostDto.folders);
-  }
-    
+    if (updatePostDto.folders !== undefined) {
+      updatePost.folders = await this.updateFolders(updatePostDto.folders);
+    }
+
     this.postsRepository.save(updatePost);
     return updatePost;
+  }catch(err){
+    throw new Error('Error while updating post: ' + err);
+  };
   }
 
-  async checkPostVisibilityUpdate(post: UpdatePostDto):Promise<UpdatePostDto>{
-    var check:Promise<UpdatePostDto> = new Promise((resolve, reject) => {
-        let index = 1;
+
+  /**
+   * @async
+   * @param UpdatePostDto
+   * @returns {Promise<UpdatePostDto>} 
+   * @throws {Error}
+   */
+  async checkPostVisibilityUpdate(post: UpdatePostDto): Promise<UpdatePostDto> {
+    try{
+    var check: Promise<UpdatePostDto> = new Promise((resolve, reject) => {
+      let index = 1;
       post.folders.forEach(async (folderId) => {
-        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+        let folder: Folder = await this.foldersService.findOneFolder(
+          folderId.id,
+        );
         // TODO: account for other visibility types
-        if (folder.folder_visibility === visibility.PUBLIC && post.post_visibility != visibility.PUBLIC) {
+        if (
+          folder.folder_visibility === visibility.PUBLIC &&
+          post.post_visibility != visibility.PUBLIC
+        ) {
           post.post_visibility = visibility.PUBLIC;
           resolve(post);
-        }else if(post.folders.length <= index){
+        } else if (post.folders.length <= index) {
           post.post_visibility = visibility.PRIVATE;
           resolve(post);
-        }else{
+        } else {
           index++;
-        }}
-      )
-  });
-  return check;
+        }
+      });
+    });
+    return check;
+  }catch(err){
+    throw new Error('Error while checking post visibility: ' + err);
+  };
   }
 
-  async updateFolders(folders: Folder[]):Promise<Folder[]>{
-    var folderPromise:Promise<Folder[]> = new Promise((resolve, reject) => {
-        let newfolders: Folder[] = [];
-        let index =0;
-        let limit = folders.length;
+
+  /**
+   * @async
+   * @param folders
+   * @returns {Promise<Folder[]>}
+   * @throws {Error}
+   */
+  async updateFolders(folders: Folder[]): Promise<Folder[]> {
+    try{
+    var folderPromise: Promise<Folder[]> = new Promise((resolve, reject) => {
+      let newfolders: Folder[] = [];
+      let index = 0;
+      let limit = folders.length;
       folders.forEach(async (folderId) => {
-        let folder: Folder = await this.foldersService.findOneFolder(folderId.id);
+        let folder: Folder = await this.foldersService.findOneFolder(
+          folderId.id,
+        );
         newfolders.push(folder);
         index++;
         if (index >= limit) {
           resolve(newfolders);
         }
-        });
-  });
-  return folderPromise;
+      });
+    });
+    return folderPromise;
+  }catch(err){
+    throw new Error('Error while updating folders: ' + err);
+  };
   }
 
+
+  /**
+   * @async
+   * @param {string}
+   * @returns {Promise<Post>}
+   */
   async removePost(id: string) {
     return await this.postsRepository.delete(id);
   }
 }
 
 
-function getBasicGroupInfo(group:Group):Group{
+/**
+ *
+ * @param group
+ * @returns Group
+ * @throws Error
+ */
+function getBasicGroupInfo(group: Group): Group {
+  try{
   const cleanedGroup: Group = new Group();
   cleanedGroup.id = group.id;
   cleanedGroup.group_name = group.group_name;
@@ -261,19 +409,32 @@ function getBasicGroupInfo(group:Group):Group{
       member.grouprank_id = undefined;
       member.member_join_date = undefined;
       member.id = undefined;
-    })
+    });
     cleanedGroup.members = group.members;
   }
   return cleanedGroup;
+}catch(err){
+  throw new Error('Error while getting basic group info: ' + err);
+};
 }
 
-function getBasicUserInfo(user:User):User{
-  const cleanedUser: User = new User();
-  cleanedUser.id = user.id;
-  cleanedUser.user_name = user.user_name;
-  cleanedUser.user_subtitle = user.user_subtitle;
-  cleanedUser.user_profile_picture = user.user_profile_picture;
-  cleanedUser.user_deactivated = user.user_deactivated;
-  cleanedUser.user_deactivation_date = user.user_deactivation_date;
-  return cleanedUser; 
+/**
+ *
+ * @param user
+ * @returns User
+ * @throws Error
+ */
+function getBasicUserInfo(user: User): User {
+  try {
+    const cleanedUser: User = new User();
+    cleanedUser.id = user.id;
+    cleanedUser.user_name = user.user_name;
+    cleanedUser.user_subtitle = user.user_subtitle;
+    cleanedUser.user_profile_picture = user.user_profile_picture;
+    cleanedUser.user_deactivated = user.user_deactivated;
+    cleanedUser.user_deactivation_date = user.user_deactivation_date;
+    return cleanedUser;
+  } catch (err) {
+    throw new Error('Error while getting basic user info: ' + err);
+  }
 }
