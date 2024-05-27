@@ -25,18 +25,18 @@ export class PostSeeder implements Seeder {
     _factoryManager: SeederFactoryManager,
   ): Promise<Post[]> {
     
-    const artwork1 = `https://media.discordapp.net/attachments/1159147970038607933/1242385965054427137/AdobeStock_408368585.jpeg?ex=664ef718&is=664da598&hm=a33567717b90a2b12f76f87d99e40d2067442aaabf31110603dc9e12d5ad41f7&=&format=webp&width=1193&height=671`;
+    const artwork1 = `https://i.imgur.com/FJ0GZMR.jpg`;
 
   
-    const artworklily = `https://media.discordapp.net/attachments/1159147970038607933/1242385962169008138/AdobeStock_71266838.jpeg?ex=664ef717&is=664da597&hm=324dc0029aa101f6b0090cebbdbcdaf436e527321f8ca1d6cbb6ae6f7699020b&=&format=webp&width=594&height=671`;
+    const artworklily = `https://i.imgur.com/5iYOGW4.jpg`;
 
    
-    const artworkparis = `https://media.discordapp.net/attachments/1159147970038607933/1242385962571399178/AdobeStock_76809767.jpeg?ex=664ef717&is=664da597&hm=542b9b373265e0e6b8a855e1fd88e35815365bde00d30bde74e8f413817c1281&=&format=webp&width=894&height=671`;
+    const artworkparis = `https://i.imgur.com/WGMVQVS.jpg`;
 
-    const artworkocean = `https://media.discordapp.net/attachments/1159147970038607933/1242385963137634344/AdobeStock_141271349.jpeg?ex=664ef718&is=664da598&hm=66b98ed847f052a461d8277d438bf1c71cbd32891de95c383b3de88dc9a140b3&=&format=webp&width=906&height=671`;
+    const artworkocean = `https://i.imgur.com/2vFH3yn.jpg`;
 
 
-    const artworkcat = `https://media.discordapp.net/attachments/1159147970038607933/1242385965595754507/AdobeStock_614142803.jpeg?ex=664ef718&is=664da598&hm=c8ee6f8bfdbb51ed2b0efd21d9f6fd5fb4d95378040f15c345159d650b3321d2&=&format=webp&width=503&height=671`;
+    const artworkcat = `https://i.imgur.com/7RpoQhU.jpg`;
 
 
     await dataSource.query('DELETE FROM "post";');

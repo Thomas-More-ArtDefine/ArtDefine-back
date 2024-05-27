@@ -12,16 +12,16 @@ export class UserSeeder implements Seeder {
 
     let profilePicturePath = path.join(__dirname, '../../../src/database/mock/assets/mock-pfp-2.png');
     const profilePicture = fs.readFileSync(profilePicturePath).toString('base64');
-    const bannerPicture = "https://media.discordapp.net/attachments/1159147970038607933/1242385965054427137/AdobeStock_408368585.jpeg?ex=664ef718&is=664da598&hm=a33567717b90a2b12f76f87d99e40d2067442aaabf31110603dc9e12d5ad41f7&=&format=webp&width=1193&height=671";
+    const bannerPicture = "https://i.imgur.com/FJ0GZMR.jpg"; // bike
    
 
-    const profilePicture2= "https://media.discordapp.net/attachments/1159147970038607933/1242385963775426611/AdobeStock_234285630.jpeg?ex=664ef718&is=664da598&hm=d797e54162f238aae6edae0259503e067f399098ec62678df9409c8e0fe1f0da&=&format=webp&width=661&height=670";
+    const profilePicture2= "https://i.imgur.com/jpUJ2Nx.jpg"; // girl
     
 
-    const bannerPicture2 = "https://media.discordapp.net/attachments/1159147970038607933/1242385962571399178/AdobeStock_76809767.jpeg?ex=664ef717&is=664da597&hm=542b9b373265e0e6b8a855e1fd88e35815365bde00d30bde74e8f413817c1281&=&format=webp&width=894&height=671";
+    const bannerPicture2 = "https://i.imgur.com/WGMVQVS.jpg"; // eifel
 
 
-    const profilePicture3 = "https://cdn.discordapp.com/attachments/1159147970038607933/1242385965293506590/AdobeStock_582643528.jpeg?ex=664ef718&is=664da598&hm=2b45a47c3e331754b086ac284fc32b453d9516b6d982ca63d5539c49df5ab4ee&";
+    const profilePicture3 = "https://i.imgur.com/RPMQJok.jpg"; // bear
 
     await dataSource.query('DELETE FROM "user";');
     const repository = dataSource.getRepository(User);
