@@ -529,6 +529,9 @@ function getBasicGroupInfo(group: Group): Group {
     }
     return cleanedGroup;
   } catch (error) {
+    if (error instanceof NotAcceptableException){
+      throw new NotAcceptableException('Error getting basic group info: ' + error);
+    }
     throw new Error('Error getting basic group info: ' + error);
   }
 }
@@ -549,7 +552,7 @@ function getBasicGroupInfoArray(array: Group[]) {
   return cleanedArray;
   }catch (error) {
     if (error instanceof NotAcceptableException){
-      throw error;
+      throw new NotAcceptableException('Error getting basic group info array: ' + error);
     }
     throw new Error('Error getting basic group info array: ' + error);
   }
@@ -580,6 +583,9 @@ function getBasicUserInfo(user: User): User {
     cleanedUser.user_profile_picture = user.user_profile_picture;
     return cleanedUser;
   } catch (error) {
+    if (error instanceof NotAcceptableException){
+      throw new NotAcceptableException('Error getting basic user info: ' + error);
+    }
     throw new Error('Error getting basic user info: ' + error);
   }
 }
