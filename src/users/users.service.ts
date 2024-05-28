@@ -346,32 +346,31 @@ export class UsersService {
    * @throws {Error | NotFoundException}
    */
   async removeUser(id: string) {
-    try{
-    
-    let deleteUser: User = await this.usersRepository.findOne({
-      relations: {
-        received_messages: true,
-        send_messages: true,
-      },
-      where: {
-        id: id,
-      },
-    });
+    try {
+      let deleteUser: User = await this.usersRepository.findOne({
+        relations: {
+          received_messages: true,
+          send_messages: true,
+        },
+        where: {
+          id: id,
+        },
+      });
 
-    if (deleteUser === undefined || deleteUser === null) {
-      throw new NotFoundException('User not found to delete');
+      if (deleteUser === undefined || deleteUser === null) {
+        throw new NotFoundException('User not found to delete');
+      }
+
+      deleteUser.received_messages = [];
+      deleteUser.send_messages = [];
+
+      await this.usersRepository.save(deleteUser);
+
+      return await this.usersRepository.delete(id);
+    } catch (err) {
+      throw err;
     }
-
-    deleteUser.received_messages = [];
-    deleteUser.send_messages = [];
-
-    await this.usersRepository.save(deleteUser);
-
-    return await this.usersRepository.delete(id);
-  }catch(err){
-    throw err;
   }
-}
 }
 
 /**
@@ -417,28 +416,31 @@ function getBasicUserInfo(user: User): User {
 /**
  *
  * @param {user} : User
- * @returns 
+ * @returns
  * @throws {Error}
  */
-
 function getProfileUserInfo(user: User) {
-  if (user === undefined || user === null) {
-    throw new NotFoundException('User not found');
+  try {
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+    const cleanedUser: User = new User();
+    cleanedUser.id = user.id;
+    cleanedUser.user_name = user.user_name;
+    cleanedUser.user_subtitle = user.user_subtitle;
+    cleanedUser.user_pronouns = user.user_pronouns;
+    cleanedUser.user_bio = user.user_bio;
+    cleanedUser.user_profile_picture = user.user_profile_picture;
+    cleanedUser.user_banner_picture = user.user_banner_picture;
+    cleanedUser.user_creationdate = user.user_creationdate;
+    cleanedUser.links = user.links;
+    cleanedUser.user_deactivated = user.user_deactivated;
+    cleanedUser.user_deactivation_date = user.user_deactivation_date;
+    cleanedUser.folders = user.folders;
+    return cleanedUser;
+  } catch (error) {
+    throw error;
   }
-  const cleanedUser: User = new User();
-  cleanedUser.id = user.id;
-  cleanedUser.user_name = user.user_name;
-  cleanedUser.user_subtitle = user.user_subtitle;
-  cleanedUser.user_pronouns = user.user_pronouns;
-  cleanedUser.user_bio = user.user_bio;
-  cleanedUser.user_profile_picture = user.user_profile_picture;
-  cleanedUser.user_banner_picture = user.user_banner_picture;
-  cleanedUser.user_creationdate = user.user_creationdate;
-  cleanedUser.links = user.links;
-  cleanedUser.user_deactivated = user.user_deactivated;
-  cleanedUser.user_deactivation_date = user.user_deactivation_date;
-  cleanedUser.folders = user.folders;
-  return cleanedUser;
 }
 
 function getBasicUserGroupInfo(groups: GroupMember[]): Group[] {
@@ -454,7 +456,6 @@ function getBasicUserGroupInfo(groups: GroupMember[]): Group[] {
     throw new Error(err);
   }
 }
-
 
 /**
  *

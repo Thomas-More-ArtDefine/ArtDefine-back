@@ -35,6 +35,8 @@ import { FolderSeeder } from './database/seeds/folder.seeder';
 import { PostSeeder } from './database/seeds/post.seeder';
 import { LinkSeeder } from './database/seeds/link.seeder';
 import { RuleSeeder } from './database/seeds/rule.seeder';
+import { LoggerMiddleware } from './middleware/RequestLogger';
+import { NestModule, MiddlewareConsumer } from '@nestjs/common';
 
 @Module({
   imports: [
@@ -92,4 +94,10 @@ import { RuleSeeder } from './database/seeds/rule.seeder';
     RuleSeeder,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes('*');
+  }
+}

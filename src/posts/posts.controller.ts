@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe, HttpException, HttpStatus, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -12,6 +12,13 @@ export class PostsController {
     try{
     return await this.postsService.createPost(createPostDto);
     }catch(error){
+      
+      if (error instanceof NotFoundException) {
+        throw new HttpException(error.message, HttpStatus.NOT_FOUND);
+      } else if (error instanceof NotAcceptableException){
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      }
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -21,6 +28,7 @@ export class PostsController {
     try{
     return await this.postsService.findAllPosts();
   }catch(error){
+    console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   }
@@ -30,6 +38,7 @@ export class PostsController {
     try{
     return await this.postsService.findAllByTag(tag);
   }catch(error){
+    console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   }
@@ -44,6 +53,7 @@ export class PostsController {
     try{
     return await this.postsService.findByTag(tag, amount, orderby, skipAmount);
   }catch(error){
+    console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   }
@@ -57,6 +67,7 @@ export class PostsController {
       return await this.postsService.findRandomPosts(10, exclude);
     }
   }catch(error){
+    console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   };
   }
@@ -66,6 +77,7 @@ export class PostsController {
     try{
     return await this.postsService.findAllByUserId(id);
   }catch(error){
+    console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
   }
   }
@@ -78,6 +90,7 @@ export class PostsController {
     if (error instanceof NotFoundException) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     } else {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -91,6 +104,7 @@ export class PostsController {
     if (error instanceof NotFoundException) {
       throw new HttpException(error.message, HttpStatus.NOT_FOUND);
     } else {
+      console.log(error);
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }

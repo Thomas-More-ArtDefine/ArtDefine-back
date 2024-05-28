@@ -28,7 +28,7 @@ export class PostSeeder implements Seeder {
     const artwork1 = `https://i.imgur.com/FJ0GZMR.jpg`;
 
   
-    const artworklily = `https://i.imgur.com/5iYOGW4.jpg`;
+    const artworklily = `https://i.imgur.com/2vFH3yn.jpg`;
 
    
     const artworkparis = `https://i.imgur.com/WGMVQVS.jpg`;

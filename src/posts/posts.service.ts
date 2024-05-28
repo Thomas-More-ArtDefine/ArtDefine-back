@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Like } from 'typeorm';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class PostsService {
@@ -17,21 +18,38 @@ export class PostsService {
     @InjectRepository(Post)
     private readonly postsRepository: Repository<Post>,
     private readonly foldersService: FoldersService,
+    private readonly usersService: UsersService,
   ) {}
 
   /**
    * @async
    * @params {CreatePostDto}
    * @returns {Promise<Post>}
-   * @throws {Error}
+   * @throws {Error | NotAcceptableException | NotFoundException}
    */
   async createPost(createPostDto: CreatePostDto): Promise<Post> {
     try {
       createPostDto = await this.checkPostVisibilityUpload(createPostDto);
 
+      if (!createPostDto.user.id) {
+        throw new NotAcceptableException('No user id provided');
+      }
+
+      
+    const user : User = await this.usersService.findOneUser(createPostDto.user.id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+        
       return await this.postsRepository.save(createPostDto);
     } catch (err) {
-      throw err;
+      if (err instanceof NotAcceptableException) {
+        throw new NotAcceptableException(err.message);
+      } else if (err instanceof NotFoundException) {
+        throw new NotFoundException(err.message);
+      }
+      throw new Error('Error while creating post: ' + err);
+      
     }
   }
 
