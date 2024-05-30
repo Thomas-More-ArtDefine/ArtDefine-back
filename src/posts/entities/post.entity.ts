@@ -42,6 +42,5 @@ export class Post {
     folders: Folder[]
 
     @OneToOne(type => FeedbackTemplate, template => template.post, {cascade: true})
-    @JoinColumn()
     feedback_template: FeedbackTemplate
 }

@@ -85,6 +85,7 @@ export class PostsController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     try{
+      console.log('searching for post with id : ', id);
     return await this.postsService.findOnePost(id);
   }catch(error){
     if (error instanceof NotFoundException) {
