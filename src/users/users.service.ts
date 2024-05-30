@@ -7,12 +7,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 import { FoldersService } from 'src/folders/folders.service';
 import { CreateFolderDto } from 'src/folders/dto/create-folder.dto';
-import { visibility } from 'src/app.controller';
+import { orderBy, visibility } from 'src/app.controller';
 import { GroupMember } from 'src/group_members/entities/group_member.entity';
 import { Group } from 'src/groups/entities/group.entity';
 
@@ -139,6 +139,48 @@ export class UsersService {
       throw err;
     }
   }
+
+    /**
+   * @async
+   * @param {string} tag
+   * @param {number} amount
+   * @param {string} order
+   * @param {number} [skipAmount]
+   * @returns {Promise<[Post[], number]>}
+   * @throws {Error}
+   */
+    async findByName(
+      name: string,
+      amount: number,
+      order: string,
+      skipAmount?: number,
+    ): Promise<[User[], number]> {
+      try {
+        const str = name.replace(/[^a-zA-Z ]/g, '');
+        let filter: orderBy = orderBy.DESC;
+        if (order && order.toUpperCase() === orderBy.ASC) {
+          filter = orderBy.ASC;
+        }
+  
+        const data = await this.usersRepository.findAndCount({
+          where: { user_name: Like('%' + str + '%') },
+          take: amount,
+          skip: skipAmount,
+          order: {
+            user_name: filter,
+          }
+        });
+  
+        data[0].forEach((user) => {
+          user = getBasicUserInfo(user);
+        });
+  
+        return data;
+      } catch (err) {
+        throw new Error('Error while finding by tab: ' + err);
+      }
+    }
+  
 
   /**
    * @param id

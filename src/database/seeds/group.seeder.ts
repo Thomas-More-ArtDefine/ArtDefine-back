@@ -62,7 +62,7 @@ export class GroupSeeder implements Seeder {
         group_queued_deletion: false,
         group_queued_deletion_date: null,
         group_setting_visibility: GroupVisibility.PUBLIC,
-        group_setting_join: GroupJoin.INVITE,
+        group_setting_join: GroupJoin.OPEN,
         id: null,
         members: null,
         links: [],
