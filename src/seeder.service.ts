@@ -12,6 +12,9 @@ import { Post } from './posts/entities/post.entity';
 import { Folder } from './folders/entities/folder.entity';
 import { LinkSeeder } from './database/seeds/link.seeder';
 import { RuleSeeder } from './database/seeds/rule.seeder';
+import FeedbackTemplateSeeder from './database/seeds/feedback_template_seeder';
+import { FeedbackTemplate } from './feedback_templates/entities/feedback_template.entity';
+import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
 
 @Injectable()
 export class SeederService {
@@ -23,12 +26,16 @@ export class SeederService {
   private readonly postSeeder: PostSeeder;
   private readonly linkSeeder: LinkSeeder;
   private readonly ruleSeeder: RuleSeeder;
+  private readonly feebackTemplateSeeder: FeedbackTemplateSeeder;
+  private readonly feedbackQuestionSeeder: FeedbackQuestionSeeder;
 
   private savedUsers: User[];
   private savedGroups: Group[];
   private savedFolders: Folder[];
   private savedGroupMembers: GroupMember[];
   private savedPosts: Post[];
+  private savedFeedbackTemplates: FeedbackTemplate[];
+
 
   constructor(
     postSeeder: PostSeeder,
@@ -39,6 +46,8 @@ export class SeederService {
     folderSeeder: FolderSeeder,
     linkSeeder: LinkSeeder,
     ruleSeeder: RuleSeeder,
+    feedbackTemplateSeeder: FeedbackTemplateSeeder,
+    feedbackQuestionSeeder: FeedbackQuestionSeeder,
   ) {
     this.userSeeder = userSeeder;
     this.dataSource = dataSource;
@@ -48,6 +57,8 @@ export class SeederService {
     this.postSeeder = postSeeder;
     this.linkSeeder = linkSeeder;
     this.ruleSeeder = ruleSeeder;
+    this.feebackTemplateSeeder = feedbackTemplateSeeder;
+    this.feedbackQuestionSeeder = feedbackQuestionSeeder;
   }
 
   async seed() {
@@ -61,6 +72,9 @@ export class SeederService {
     await this.savePosts();
     await this.saveLinks();
     await this.saveRules();
+    await this.saveFeedbackTemplates();
+    await this.saveFeedbackQuestions();
+    await this.dataSource.destroy();
     console.log('--- Seeding completed ---');
   }
   async saveLinks() {
@@ -117,5 +131,20 @@ export class SeederService {
     this.ruleSeeder.setGroups(this.savedGroups);
     await this.ruleSeeder.run(this.dataSource, null);
     console.log('Seeding rules [completed]');
+  }
+
+  async saveFeedbackTemplates() {
+    console.log('Seeding feedback Templates started');
+    this.feebackTemplateSeeder.setPosts(this.savedPosts);
+    this.savedFeedbackTemplates = await this.feebackTemplateSeeder.run(this.dataSource, null);
+    console.log('Seeding feedback Templates [completed]');
+  };
+
+
+  async saveFeedbackQuestions() {
+    console.log('Seeding feedback questions started');
+    this.feedbackQuestionSeeder.setTemplates(this.savedFeedbackTemplates);
+    await this.feedbackQuestionSeeder.run(this.dataSource, null);
+    console.log('Seeding feedback questions [completed]');
   }
 }
