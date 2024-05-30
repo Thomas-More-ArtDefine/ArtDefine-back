@@ -38,6 +38,9 @@ import { RuleSeeder } from './database/seeds/rule.seeder';
 import { LoggerMiddleware } from './middleware/RequestLogger';
 import { NestModule, MiddlewareConsumer } from '@nestjs/common';
 
+import FeedbackTemplateSeeder from './database/seeds/feedback_template_seeder';
+import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
+
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -92,6 +95,8 @@ import { NestModule, MiddlewareConsumer } from '@nestjs/common';
     PostSeeder,
     LinkSeeder,
     RuleSeeder,
+    FeedbackTemplateSeeder,
+    FeedbackQuestionSeeder,
   ],
 })
 export class AppModule implements NestModule {
