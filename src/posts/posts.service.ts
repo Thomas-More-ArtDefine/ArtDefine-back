@@ -11,6 +11,7 @@ import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
 import { Like } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { FeedbackQuestion } from 'src/feedback_questions/entities/feedback_question.entity';
 
 @Injectable()
 export class PostsService {
@@ -261,10 +262,13 @@ export class PostsService {
             folders: 'post.folders',
             group: 'folders.group',
             group_members: 'group.members',
+            feedback_template: 'post.feedback_template',
+            FeedbackQuestion: 'feedback_template.questions',
           },
         },
       });
 
+      console.log(post);
 
       if (post === undefined || post === null) {
         console.log('Post not found');

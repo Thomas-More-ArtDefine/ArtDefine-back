@@ -74,7 +74,7 @@ export class SeederService {
     await this.saveRules();
     await this.saveFeedbackTemplates();
     await this.saveFeedbackQuestions();
-    await this.dataSource.destroy();
+    
     console.log('--- Seeding completed ---');
   }
   async saveLinks() {
