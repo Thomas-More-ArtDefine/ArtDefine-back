@@ -242,6 +242,51 @@ export class PostsService {
     }
   }
 
+    /**
+   * @async
+   * @param {string} tag
+   * @param {number} amount
+   * @param {string} order
+   * @param {number} [skipAmount]
+   * @returns {Promise<[Post[], number]>}
+   * @throws {Error}
+   */
+    async findByName(
+      name: string,
+      amount: number,
+      order: string,
+      skipAmount?: number,
+    ): Promise<[Post[], number]> {
+      try {
+        const str = name.replace(/[^a-zA-Z ]/g, '');
+        let filter: orderBy = orderBy.DESC;
+        if (order && order.toUpperCase() === orderBy.ASC) {
+          filter = orderBy.ASC;
+        }
+  
+        const data = await this.postsRepository.findAndCount({
+          where: { post_title: Like('%' + str + '%') },
+          take: amount,
+          skip: skipAmount,
+          order: {
+            post_title: filter,
+          },
+          relations: {
+            user: true,
+          },
+        });
+  
+        data[0].forEach((post) => {
+          post.user = getBasicUserInfo(post.user);
+        });
+  
+        return data;
+      } catch (err) {
+        throw new Error('Error while finding by tab: ' + err);
+      }
+    }
+  
+
 
   /**
    * @async

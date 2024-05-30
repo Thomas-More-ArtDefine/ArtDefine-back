@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseArrayPipe, HttpException, HttpStatus, NotFoundException, NotAcceptableException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpException, HttpStatus, NotFoundException, NotAcceptableException } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -52,6 +52,21 @@ export class PostsController {
   ){
     try{
     return await this.postsService.findByTag(tag, amount, orderby, skipAmount);
+  }catch(error){
+    console.log(error);
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
+  }
+
+  @Get('search/title/:title')
+  async getByTitle(
+    @Param('title') title: string,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('skipAmount') skipAmount?: number
+  ){
+    try{
+    return await this.postsService.findByName(title, amount, orderby, skipAmount);
   }catch(error){
     console.log(error);
     throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);

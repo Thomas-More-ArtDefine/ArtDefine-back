@@ -15,6 +15,7 @@ import {
   HttpException,
   HttpStatus,
   NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -57,6 +58,21 @@ export class UsersController {
         throw new Error('Something went wrong');
       }
     }
+  }
+
+  @Get('search/username/:name')
+  async getByUsername(
+    @Param('name') name: string,
+    @Query('amount') amount:number,
+    @Query('orderby') orderby: string, 
+    @Query('skipAmount') skipAmount?: number
+  ){
+    try{
+    return await this.usersService.findByName(name, amount, orderby, skipAmount);
+  }catch(error){
+    console.log(error);
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
   }
 
   @Get(':id/basic')
