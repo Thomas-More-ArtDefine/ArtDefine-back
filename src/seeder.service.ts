@@ -18,16 +18,7 @@ import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
 
 @Injectable()
 export class SeederService {
-  private readonly userSeeder: UserSeeder;
-  private readonly dataSource: DataSource;
-  private readonly groupSeeder: GroupSeeder;
-  private readonly groupMembersSeeder: GroupMembersSeeder;
-  private readonly folderSeeder: FolderSeeder;
-  private readonly postSeeder: PostSeeder;
-  private readonly linkSeeder: LinkSeeder;
-  private readonly ruleSeeder: RuleSeeder;
-  private readonly feebackTemplateSeeder: FeedbackTemplateSeeder;
-  private readonly feedbackQuestionSeeder: FeedbackQuestionSeeder;
+
 
   private savedUsers: User[];
   private savedGroups: Group[];
@@ -38,113 +29,105 @@ export class SeederService {
 
 
   constructor(
-    postSeeder: PostSeeder,
-    userSeeder: UserSeeder,
-    dataSource: DataSource,
-    groupSeeder: GroupSeeder,
-    GroupMembersSeeder: GroupMembersSeeder,
-    folderSeeder: FolderSeeder,
-    linkSeeder: LinkSeeder,
-    ruleSeeder: RuleSeeder,
-    feedbackTemplateSeeder: FeedbackTemplateSeeder,
-    feedbackQuestionSeeder: FeedbackQuestionSeeder,
-  ) {
-    this.userSeeder = userSeeder;
-    this.dataSource = dataSource;
-    this.groupSeeder = groupSeeder;
-    this.groupMembersSeeder = GroupMembersSeeder;
-    this.folderSeeder = folderSeeder;
-    this.postSeeder = postSeeder;
-    this.linkSeeder = linkSeeder;
-    this.ruleSeeder = ruleSeeder;
-    this.feebackTemplateSeeder = feedbackTemplateSeeder;
-    this.feedbackQuestionSeeder = feedbackQuestionSeeder;
-  }
+    private userSeeder: UserSeeder,
+    private dataSource: DataSource,
+    private groupSeeder: GroupSeeder,
+    private groupMembersSeeder: GroupMembersSeeder,
+    private folderSeeder: FolderSeeder,
+    private postSeeder: PostSeeder,
+    private linkSeeder: LinkSeeder,
+    private ruleSeeder: RuleSeeder,
+    private feedbackTemplateSeeder: FeedbackTemplateSeeder,
+    private feedbackQuestionSeeder: FeedbackQuestionSeeder,
+  ) {}
 
   async seed() {
-    console.log('--- Seeding started ---');
-    await this.dataSource.dropDatabase();
-    await this.dataSource.synchronize();
-    await this.saveUsers();
-    await this.saveGroups();
-    await this.saveGroupsMembers();
-    await this.saveFolders();
-    await this.savePosts();
-    await this.saveLinks();
-    await this.saveRules();
-    await this.saveFeedbackTemplates();
-    await this.saveFeedbackQuestions();
-   
-    console.log('--- Seeding completed ---');
+    try {
+      console.log('🌱 Seeding started 🌱');
+      
+        await this.saveUsers(),
+        await this.saveGroups(),
+        await this.saveGroupsMembers(),
+        await this.saveFolders(),
+        await this.savePosts(),
+        await this.saveLinks(),
+        await this.saveRules(),
+        await this.saveFeedbackTemplates(),
+        await this.saveFeedbackQuestions(),
+     
+      console.log('🪴 Seeding completed 🪴');
+    } catch (error) {
+      console.error('🥀 Seeding failed 🥀', error);
+    }
   }
   async saveLinks() {
-    console.log('Seeding links started');
+    console.log('💦 Seeding links started');
     this.linkSeeder.setUsers(this.savedUsers);
     this.linkSeeder.setGroups(this.savedGroups);
     await this.linkSeeder.run(this.dataSource, null);
-    console.log('Seeding links [completed]');
+    console.log('🌿 Seeding links [completed]');
   }
 
   async saveUsers() {
-    console.log('Seeding users started');
+    console.log('💦 Seeding users started');
     this.savedUsers = await this.userSeeder.run(this.dataSource, null);
-    console.log('Seeding users [completed]');
+    console.log('🌿 Seeding users [completed]');
   }
 
   async saveGroups() {
-    console.log('Seeding groups started');
+    console.log('💦 Seeding groups started');
     this.groupSeeder.setUsers(this.savedUsers);
     this.savedGroups = await this.groupSeeder.run(this.dataSource, null);
-    console.log('Seeding groups [completed]');
+    console.log('🌿 Seeding groups [completed]');
   }
 
   async saveGroupsMembers() {
-    console.log('Seeding group members started');
+    console.log('💦 Seeding group members started');
     this.groupMembersSeeder.setUsers(this.savedUsers);
     this.groupMembersSeeder.setGroups(this.savedGroups);
     this.savedGroupMembers = await this.groupMembersSeeder.run(
       this.dataSource,
       null,
     );
-    console.log('Seeding group members [completed]');
+    console.log('🌿 Seeding group members [completed]');
   }
 
   async saveFolders() {
-    console.log('Seeding folders started');
+    console.log('💦 Seeding folders started');
     this.folderSeeder.setUsers(this.savedUsers);
     this.folderSeeder.setGroups(this.savedGroups);
     this.savedFolders = await this.folderSeeder.run(this.dataSource, null);
-    console.log('Seeding folders [completed]');
+    console.log('🌿 Seeding folders [completed]');
   }
 
   async savePosts() {
-    console.log('Seeding posts started');
+    console.log('💦 Seeding posts started');
     this.postSeeder.setUsers(this.savedUsers);
     this.postSeeder.setFolders(this.savedFolders);
     this.savedPosts = await this.postSeeder.run(this.dataSource, null);
-    console.log('Seeding posts [completed]');
+    console.log('🌿 Seeding posts [completed]');
   }
 
   async saveRules() {
-    console.log('Seeding rules started');
+    console.log('💦 Seeding rules started');
     this.ruleSeeder.setUsers(this.savedUsers);
     this.ruleSeeder.setGroups(this.savedGroups);
     await this.ruleSeeder.run(this.dataSource, null);
-    console.log('Seeding rules [completed]');
+    console.log('🌿 Seeding rules [completed]');
   }
 
   async saveFeedbackTemplates() {
-    console.log('Seeding feedback Templates started');
-    this.feebackTemplateSeeder.setPosts(this.savedPosts);
-    this.savedFeedbackTemplates = await this.feebackTemplateSeeder.run(this.dataSource, null);
-    console.log('Seeding feedback Templates [completed]');
+    console.log('💦 Seeding feedback Templates started');
+    this.feedbackTemplateSeeder.setPosts(this.savedPosts);
+    this.savedFeedbackTemplates = await this.feedbackTemplateSeeder.run(this.dataSource, null);
+    console.log('🌿 Seeding feedback Templates [completed]');
   };
 
 
   async saveFeedbackQuestions() {
-    console.log('Seeding feedback questions started');
+    console.log('💦 Seeding feedback questions started');
     this.feedbackQuestionSeeder.setTemplates(this.savedFeedbackTemplates);
     await this.feedbackQuestionSeeder.run(this.dataSource, null);
-    console.log('Seeding feedback questions [completed]');
+    console.log('🌿 Seeding feedback questions [completed]');
   }
 }

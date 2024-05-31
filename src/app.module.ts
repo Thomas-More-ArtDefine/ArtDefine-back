@@ -40,6 +40,7 @@ import { NestModule, MiddlewareConsumer } from '@nestjs/common';
 
 import FeedbackTemplateSeeder from './database/seeds/feedback_template_seeder';
 import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
+import FeedbackResultSeeder from './database/seeds/feedback_result_seeder';
 
 @Module({
   imports: [
@@ -97,6 +98,7 @@ import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
     RuleSeeder,
     FeedbackTemplateSeeder,
     FeedbackQuestionSeeder,
+    FeedbackResultSeeder,
   ],
 })
 export class AppModule implements NestModule {

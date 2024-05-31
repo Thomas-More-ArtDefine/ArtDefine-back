@@ -22,12 +22,13 @@ export default class FeedbackQuestionSeeder implements Seeder {
 
     const feedbackQuestions: FeedbackQuestion[] = [
         {
-            id: undefined,
-            question_title: "How did you think about the colors?",
-            question_type: questionType.STARS,
-            template_id: this.templates[0].id,
-            content: {} as JSON,
-            template: this.templates[0]
+          id: undefined,
+          question_title: "How did you think about the colors?",
+          question_type: questionType.STARS,
+          template_id: this.templates[0].id,
+          content: {} as JSON,
+          template: this.templates[0],
+          feedback: null,
         },]
 
    
