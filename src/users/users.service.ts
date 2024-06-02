@@ -1,13 +1,11 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
-  HttpException,
-  HttpStatus,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UpdateGeneralInfoDto } from './dto/update-general-info.dto';
 import { FoldersService } from 'src/folders/folders.service';
@@ -163,7 +161,7 @@ export class UsersService {
         }
   
         const data = await this.usersRepository.findAndCount({
-          where: { user_name: Like('%' + str + '%') },
+          where: { user_name: ILike('%' + str + '%') },
           take: amount,
           skip: skipAmount,
           order: {

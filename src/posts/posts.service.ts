@@ -9,9 +9,8 @@ import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Like } from 'typeorm';
+import { ILike } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
-import { FeedbackQuestion } from 'src/feedback_questions/entities/feedback_question.entity';
 
 @Injectable()
 export class PostsService {
@@ -177,7 +176,7 @@ export class PostsService {
       }
 
       const data = await this.postsRepository.findAndCount({
-        where: { post_tags: Like('%' + tag + ',%') },
+        where: { post_tags: ILike('%' + tag + ',%') },
         take: amount,
         skip: skipAmount,
         order: {
@@ -221,7 +220,7 @@ export class PostsService {
         }
   
         const data = await this.postsRepository.findAndCount({
-          where: { post_title: Like('%' + str + '%') },
+          where: { post_title: ILike('%' + str + '%') },
           take: amount,
           skip: skipAmount,
           order: {
