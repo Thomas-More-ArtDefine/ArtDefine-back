@@ -113,53 +113,8 @@ export class PostsService {
     exclude?: string,
   ): Promise<Post[]> {
     try {
-      const totalNumberPosts: number = await this.postsRepository.count();
-
-      let feedArray: Post[] = [];
-      let usedIds: string[] = [];
-      if (exclude != undefined) {
-        usedIds = exclude.split(',');
-      }
-
-      // return empty array when no posts are found
-      if (totalNumberPosts === 0) {
-        return [];
-      }
-
-      let index = 0;
-      for (let timeout = 0; timeout < 1000; timeout++) {
-        let id: string = (
-          Math.floor(Math.random() * totalNumberPosts) + 1
-        ).toString();
-
-        if (!usedIds.includes(id)) {
-          usedIds.push(id);
-
-          let post: Post = await this.postsRepository.findOne({
-            where: {
-              id: id,
-            },
-            relations: {
-              user: true,
-            },
-          });
-
-          if (post === null) {
-            break;
-          }
-
-          post.user = getBasicUserInfo(post.user);
-
-          if (post.post_visibility === visibility.PUBLIC) {
-            feedArray.push(post);
-            index++;
-          }
-          if (index >= numberPosts) {
-            break;
-          }
-        }
-      }
-      return feedArray;
+      const query: string = 'SELECT * FROM post LEFT JOIN "user" ON "user"."id" = "post"."user_id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
+      return cleanFeedOutput( await this.postsRepository.query(query));
     } catch (err) {
       throw err;
     }
@@ -505,3 +460,25 @@ function getBasicUserInfo(user: User): User {
     throw new Error('Error while getting basic user info: ' + err);
   }
 }
+
+function cleanFeedOutput(posts: any[]): Post[] {
+  try {
+    const cleanedFeed: Post[] = [];
+    posts.forEach((post)=>{
+      let newPost: Post = new Post();
+      newPost.id =post.id;
+      newPost.post_title = post.post_title;
+      newPost.post_tags = post.post_tags;
+      newPost.post_content = post.post_content;
+      newPost.post_visibility = post.post_visibility;
+      newPost.post_uploaddate= post.post_uploaddate;
+      newPost.user = getBasicUserInfo(post);
+
+      cleanedFeed.push(newPost);
+    })
+    return cleanedFeed;
+  } catch (err) {
+    throw new Error('Error while getting basic user info: ' + err);
+  }
+}
+
