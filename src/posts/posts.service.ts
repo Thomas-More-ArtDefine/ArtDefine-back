@@ -112,8 +112,8 @@ export class PostsService {
     exclude?: string,
   ): Promise<Post[]> {
     try {
-      const query: string = 'SELECT * FROM post LEFT JOIN "user" ON "user"."id" = "post"."user_id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
-      return cleanFeedOutput( await this.postsRepository.query(query));
+      const query: string = 'SELECT *, "post"."id" as "post_id" FROM post LEFT JOIN "user" ON "post"."user_id" = "user"."id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
+      return cleanFeedOutput(await this.postsRepository.query(query));
     } catch (err) {
       throw err;
     }
@@ -465,7 +465,7 @@ function cleanFeedOutput(posts: any[]): Post[] {
     const cleanedFeed: Post[] = [];
     posts.forEach((post)=>{
       let newPost: Post = new Post();
-      newPost.id =post.id;
+      newPost.id =post.post_id;
       newPost.post_title = post.post_title;
       newPost.post_tags = post.post_tags;
       newPost.post_content = post.post_content;
