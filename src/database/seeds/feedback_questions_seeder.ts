@@ -28,7 +28,7 @@ export default class FeedbackQuestionSeeder implements Seeder {
           template_id: this.templates[0].id,
           content: {} as JSON,
           template: this.templates[0],
-          feedback: null,
+          feedback_results: [],
         },]
 
    

@@ -33,6 +33,6 @@ export class FeedbackQuestion {
     @JoinColumn({name: 'template_id'})
     template: FeedbackTemplate;
 
-    @OneToMany(type => FeedbackResult, question => question.question, {cascade: true})
-    feedback: FeedbackResult[];
+    @OneToMany(type => FeedbackResult, question => question.question, {cascade: true, eager: true, onDelete: "CASCADE"})
+    feedback_results: FeedbackResult[];
 }

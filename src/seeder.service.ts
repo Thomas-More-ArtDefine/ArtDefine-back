@@ -140,7 +140,7 @@ export class SeederService {
   async saveFeedbackResults() {
     console.log('💦 Seeding feedback results started');
     this.feedbackResultSeeder.setTemplates(this.savedFeedbackTemplates);
-    this.feedbackResultSeeder.setUser(this.savedUsers[0]);
+    this.feedbackResultSeeder.setUsers(this.savedUsers);
     await this.feedbackResultSeeder.run(this.dataSource, null);
     console.log('🌿 Seeding feedback results [completed]');
   }
