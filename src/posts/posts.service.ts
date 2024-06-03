@@ -9,9 +9,8 @@ import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Like } from 'typeorm';
+import { ILike } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
-import { FeedbackQuestion } from 'src/feedback_questions/entities/feedback_question.entity';
 
 @Injectable()
 export class PostsService {
@@ -113,53 +112,8 @@ export class PostsService {
     exclude?: string,
   ): Promise<Post[]> {
     try {
-      const totalNumberPosts: number = await this.postsRepository.count();
-
-      let feedArray: Post[] = [];
-      let usedIds: string[] = [];
-      if (exclude != undefined) {
-        usedIds = exclude.split(',');
-      }
-
-      // return empty array when no posts are found
-      if (totalNumberPosts === 0) {
-        return [];
-      }
-
-      let index = 0;
-      for (let timeout = 0; timeout < 1000; timeout++) {
-        let id: string = (
-          Math.floor(Math.random() * totalNumberPosts) + 1
-        ).toString();
-
-        if (!usedIds.includes(id)) {
-          usedIds.push(id);
-
-          let post: Post = await this.postsRepository.findOne({
-            where: {
-              id: id,
-            },
-            relations: {
-              user: true,
-            },
-          });
-
-          if (post === null) {
-            break;
-          }
-
-          post.user = getBasicUserInfo(post.user);
-
-          if (post.post_visibility === visibility.PUBLIC) {
-            feedArray.push(post);
-            index++;
-          }
-          if (index >= numberPosts) {
-            break;
-          }
-        }
-      }
-      return feedArray;
+      const query: string = 'SELECT *, "post"."id" as "post_id" FROM post LEFT JOIN "user" ON "post"."user_id" = "user"."id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
+      return cleanFeedOutput(await this.postsRepository.query(query));
     } catch (err) {
       throw err;
     }
@@ -222,7 +176,7 @@ export class PostsService {
       }
 
       const data = await this.postsRepository.findAndCount({
-        where: { post_tags: Like('%' + tag + ',%') },
+        where: { post_tags: ILike('%' + tag + ',%') },
         take: amount,
         skip: skipAmount,
         order: {
@@ -266,7 +220,7 @@ export class PostsService {
         }
   
         const data = await this.postsRepository.findAndCount({
-          where: { post_title: Like('%' + str + '%') },
+          where: { post_title: ILike('%' + str + '%') },
           take: amount,
           skip: skipAmount,
           order: {
@@ -505,3 +459,25 @@ function getBasicUserInfo(user: User): User {
     throw new Error('Error while getting basic user info: ' + err);
   }
 }
+
+function cleanFeedOutput(posts: any[]): Post[] {
+  try {
+    const cleanedFeed: Post[] = [];
+    posts.forEach((post)=>{
+      let newPost: Post = new Post();
+      newPost.id =post.post_id;
+      newPost.post_title = post.post_title;
+      newPost.post_tags = post.post_tags;
+      newPost.post_content = post.post_content;
+      newPost.post_visibility = post.post_visibility;
+      newPost.post_uploaddate= post.post_uploaddate;
+      newPost.user = getBasicUserInfo(post);
+
+      cleanedFeed.push(newPost);
+    })
+    return cleanedFeed;
+  } catch (err) {
+    throw new Error('Error while getting basic user info: ' + err);
+  }
+}
+

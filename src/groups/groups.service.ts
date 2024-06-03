@@ -20,12 +20,11 @@ import {
   group_rank,
 } from 'src/group_ranks/entities/group_rank.entity';
 import { orderBy, visibility } from 'src/app.controller';
-import { Like, Not } from 'typeorm';
+import { ILike } from 'typeorm';
 import { UpdateGroupSettingsDto } from './dto/update-group-settings.dto';
 import { UpdateGroupDeletionDto } from './dto/update-group-deletion.dto';
 import { CreateFolderDto } from 'src/folders/dto/create-folder.dto';
 import { FoldersService } from 'src/folders/folders.service';
-import e from 'express';
 
 @Injectable()
 export class GroupsService {
@@ -191,7 +190,7 @@ export class GroupsService {
     }
 
     const data = await this.groupsRepository.findAndCount({
-      where: { group_name: Like('%' + str + '%') },
+      where: { group_name: ILike('%' + str + '%') },
       take: amount,
       skip: skipAmount,
       order: {
