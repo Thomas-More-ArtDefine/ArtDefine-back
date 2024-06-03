@@ -21,6 +21,5 @@ export class FeedbackTemplate {
     @JoinColumn({name: 'post_id'})
     post: Post;
 
-    @OneToMany(type => FeedbackResult, feedback => feedback.template)
-    feedback: FeedbackResult[];
+    
 }

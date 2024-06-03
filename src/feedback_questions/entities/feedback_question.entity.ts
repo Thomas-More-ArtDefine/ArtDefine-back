@@ -1,3 +1,4 @@
+import { FeedbackResult } from 'src/feedback_results/entities/feedback_result.entity';
 import { FeedbackTemplate } from 'src/feedback_templates/entities/feedback_template.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinTable, ManyToMany, ManyToOne, JoinColumn } from 'typeorm';
 
@@ -28,7 +29,10 @@ export class FeedbackQuestion {
     @Column({ type: 'json', nullable: true })
     content: JSON;
 
-    @ManyToOne(type => FeedbackTemplate, template => template.questions)
+    @ManyToOne(type => FeedbackTemplate, template => template.questions, {onDelete: "CASCADE"})
     @JoinColumn({name: 'template_id'})
     template: FeedbackTemplate;
+
+    @OneToMany(type => FeedbackResult, question => question.question, {cascade: true})
+    feedback: FeedbackResult[];
 }

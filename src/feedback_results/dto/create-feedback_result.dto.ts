@@ -1,5 +1,6 @@
 import { IsJSON, IsObject } from "class-validator";
-import { FeedbackTemplate } from "src/feedback_templates/entities/feedback_template.entity";
+import { FeedbackQuestion } from "src/feedback_questions/entities/feedback_question.entity";
+
 import { User } from "src/users/entities/user.entity";
 
 export class CreateFeedbackResultDto {
@@ -8,5 +9,5 @@ export class CreateFeedbackResultDto {
     @IsObject()
     user: User;
     @IsObject()
-    template: FeedbackTemplate;
+    question: FeedbackQuestion;
 }

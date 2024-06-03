@@ -23,9 +23,8 @@ export default class FeedbackTemplateSeeder implements Seeder {
         id: undefined,
         post_id: this.savedPosts[0].id,
         post: this.savedPosts[0],
-        questions: [
-        ],
-        feedback: [],
+        questions: [],
+       
       },
     ];
 
