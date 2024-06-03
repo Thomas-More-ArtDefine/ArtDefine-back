@@ -15,6 +15,8 @@ import { RuleSeeder } from './database/seeds/rule.seeder';
 import FeedbackTemplateSeeder from './database/seeds/feedback_template_seeder';
 import { FeedbackTemplate } from './feedback_templates/entities/feedback_template.entity';
 import FeedbackQuestionSeeder from './database/seeds/feedback_questions_seeder';
+import FeedbackResultSeeder from './database/seeds/feedback_result_seeder';
+import { FeedbackQuestion } from './feedback_questions/entities/feedback_question.entity';
 
 @Injectable()
 export class SeederService {
@@ -26,6 +28,7 @@ export class SeederService {
   private savedGroupMembers: GroupMember[];
   private savedPosts: Post[];
   private savedFeedbackTemplates: FeedbackTemplate[];
+  private savedFeedbackQuestions: FeedbackQuestion[];
 
 
   constructor(
@@ -39,6 +42,7 @@ export class SeederService {
     private ruleSeeder: RuleSeeder,
     private feedbackTemplateSeeder: FeedbackTemplateSeeder,
     private feedbackQuestionSeeder: FeedbackQuestionSeeder,
+    private feedbackResultSeeder: FeedbackResultSeeder,
   ) {}
 
   async seed() {
@@ -54,6 +58,7 @@ export class SeederService {
         await this.saveRules(),
         await this.saveFeedbackTemplates(),
         await this.saveFeedbackQuestions(),
+        await this.saveFeedbackResults(),
      
       console.log('🪴 Seeding completed 🪴');
     } catch (error) {
@@ -127,7 +132,26 @@ export class SeederService {
   async saveFeedbackQuestions() {
     console.log('💦 Seeding feedback questions started');
     this.feedbackQuestionSeeder.setTemplates(this.savedFeedbackTemplates);
-    await this.feedbackQuestionSeeder.run(this.dataSource, null);
+    this.savedFeedbackQuestions = await this.feedbackQuestionSeeder.run(this.dataSource, null);
+    await addQuestionstoTemplate(this.savedFeedbackTemplates, this.savedFeedbackQuestions);
     console.log('🌿 Seeding feedback questions [completed]');
   }
+
+  async saveFeedbackResults() {
+    console.log('💦 Seeding feedback results started');
+    this.feedbackResultSeeder.setTemplates(this.savedFeedbackTemplates);
+    this.feedbackResultSeeder.setUser(this.savedUsers[0]);
+    await this.feedbackResultSeeder.run(this.dataSource, null);
+    console.log('🌿 Seeding feedback results [completed]');
+  }
 }
+
+
+
+async function addQuestionstoTemplate(savedFeedbackTemplates: FeedbackTemplate[], savedFeedbackQuestions: FeedbackQuestion[]) {
+  for (const template of savedFeedbackTemplates) {
+    const questions = savedFeedbackQuestions.filter(question => question.template_id === template.id);
+    template.questions = questions;
+  }
+}
+

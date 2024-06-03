@@ -10,9 +10,13 @@ export default class FeedbackResultSeeder implements Seeder {
     private templates: FeedbackTemplate[];
     private user: User;
 
-    public setTemplates(templates: FeedbackTemplate[], user:User,): void {
-        this.templates = templates;
+    public setUser(user: User): void {
         this.user = user;
+    }
+
+    public setTemplates(templates: FeedbackTemplate[]): void {
+        this.templates = templates;
+      
     }
 
   public async run(
@@ -24,7 +28,7 @@ export default class FeedbackResultSeeder implements Seeder {
 
     const feedbackResults: FeedbackResult[] = [
         {
-            id: "",
+            id: undefined,
             feedback_result: {ansewer: "a result"} as unknown as JSON,
             user_id: this.user.id,
             user: this.user,
