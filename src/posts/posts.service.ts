@@ -160,8 +160,21 @@ export class PostsService {
     id:string,
     amount: number,
     skipAmount?: number,
-  ): Promise<[Post[], number]> {
+  ): Promise<Post[]> {
     try {
+      let list: Post[] = [];
+      const groups = await this.usersService.findAllGroups(id);
+
+      let i: keyof Group;
+      for (const i in groups) {
+        const folders: Folder[] = await this.foldersService.findFoldersByGroupId(groups[i].id);
+        let j: keyof Folder;
+        for (const j in folders) {
+          folders[j].posts.forEach((post)=>{
+            list.push(post);
+          })
+        }
+      }
 
       const following = await this.usersService.findAllFollowing(id);
       const ids = [];
@@ -169,7 +182,7 @@ export class PostsService {
         ids.push(user.id);
       })
       let filter: orderBy = orderBy.DESC;
-      const data = await this.postsRepository.findAndCount({
+      const data = await this.postsRepository.find({
         where:{
           user_id: In(ids)
         },
@@ -183,15 +196,34 @@ export class PostsService {
         },
       });
 
-      data[0].forEach((post) => {
+      
+      data.forEach((post) => {
         post.user = getBasicUserInfo(post.user);
       });
+
+      list.forEach((post)=>{
+        
+        if (!this.includesPost(data, post)) {
+          data.push(post);
+        }
+        
+      })
 
       return data;
       
     } catch (err) {
       throw err;
     }
+  }
+
+  includesPost(array:Post[], post:Post): Boolean{
+    let bool: Boolean = false;
+    array.forEach((item)=>{
+      if (item.id === post.id) {
+        bool = true;
+      }
+    })
+    return bool;
   }
 
   /**
