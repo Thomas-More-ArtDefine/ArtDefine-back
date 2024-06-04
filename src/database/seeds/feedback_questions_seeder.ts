@@ -23,13 +23,78 @@ export default class FeedbackQuestionSeeder implements Seeder {
     const feedbackQuestions: FeedbackQuestion[] = [
         {
           id: undefined,
-          question_title: "How did you think about the colors?",
+          question_title: "How would you rate the use of color?",
           question_type: questionType.STARS,
           template_id: this.templates[0].id,
-          content: {} as JSON,
+          content: null,
           template: this.templates[0],
           feedback_results: [],
-        },]
+        },
+        {
+          id: undefined,
+          question_title: "What do you find most captivating ?",
+          question_type: questionType.OPEN,
+          template_id: this.templates[0].id,
+          content: null,
+          template: this.templates[0],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "What feeling does it bring to you?",
+          question_type: questionType.BULLETPOINTS,
+          template_id: this.templates[0].id,
+          content:"[\"Love\",\"Anger\",\"Joy\"]",
+          template: this.templates[0],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "How would you rate the use of color?",
+          question_type: questionType.STARS,
+          template_id: this.templates[1].id,
+          content: null,
+          template: this.templates[1],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "How much are you emotionally moved?",
+          question_type: questionType.STARS,
+          template_id: this.templates[1].id,
+          content: null,
+          template: this.templates[1],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "How you does the title fit the artpiece?",
+          question_type: questionType.STARS,
+          template_id: this.templates[1].id,
+          content: null,
+          template: this.templates[1],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "What do you find most captivating ?",
+          question_type: questionType.OPEN,
+          template_id: this.templates[2].id,
+          content: null,
+          template: this.templates[2],
+          feedback_results: [],
+        },
+        {
+          id: undefined,
+          question_title: "How I can enhance the play of light ? ?",
+          question_type: questionType.OPEN,
+          template_id: this.templates[2].id,
+          content: null,
+          template: this.templates[2],
+          feedback_results: [],
+        }
+
+      ]
 
    
 

@@ -26,6 +26,19 @@ export default class FeedbackTemplateSeeder implements Seeder {
         questions: [],
        
       },
+      {
+        id: undefined,
+        post_id: this.savedPosts[1].id,
+        post: this.savedPosts[1],
+        questions: [],
+      },
+      {
+        id: undefined,
+        post_id: this.savedPosts[2].id,
+        post: this.savedPosts[2],
+        questions: [],
+      }
+
     ];
 
     return await repository.save(feedbackTemplates);
