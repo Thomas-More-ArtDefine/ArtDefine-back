@@ -9,7 +9,7 @@ import { FoldersService } from 'src/folders/folders.service';
 import { Folder } from 'src/folders/entities/folder.entity';
 import { Group } from 'src/groups/entities/group.entity';
 import { User } from 'src/users/entities/user.entity';
-import { ILike } from 'typeorm';
+import { ArrayContains, ILike, In, Not } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 
 @Injectable()
@@ -114,6 +114,81 @@ export class PostsService {
     try {
       const query: string = 'SELECT *, "post"."id" as "post_id" FROM post LEFT JOIN "user" ON "post"."user_id" = "user"."id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
       return cleanFeedOutput(await this.postsRepository.query(query));
+    } catch (err) {
+      throw err;
+    }
+  }
+
+
+  /**
+   * @async
+   * @returns {Promise<Post[]>}
+   * @throws {Error}
+   */
+  async findRecentPosts(
+    amount: number,
+    skipAmount?: number,
+  ): Promise<[Post[], number]> {
+    try {
+      let filter: orderBy = orderBy.DESC;
+      const data = await this.postsRepository.findAndCount({
+        where:{
+          post_visibility: visibility.PUBLIC,
+        },
+        take: amount,
+        skip: skipAmount,
+        order: {
+          post_uploaddate: filter,
+        },
+        relations: {
+          user: true,
+        },
+      });
+
+      data[0].forEach((post) => {
+        post.user = getBasicUserInfo(post.user);
+      });
+
+      return data;
+      
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async findFollowedPosts(
+    id:string,
+    amount: number,
+    skipAmount?: number,
+  ): Promise<[Post[], number]> {
+    try {
+
+      const following = await this.usersService.findAllFollowing(id);
+      const ids = [];
+      following.forEach((user)=>{
+        ids.push(user.id);
+      })
+      let filter: orderBy = orderBy.DESC;
+      const data = await this.postsRepository.findAndCount({
+        where:{
+          user_id: In(ids)
+        },
+        take: amount,
+        skip: skipAmount,
+        order: {
+          post_uploaddate: filter,
+        },
+        relations: {
+          user: true,
+        },
+      });
+
+      data[0].forEach((post) => {
+        post.user = getBasicUserInfo(post.user);
+      });
+
+      return data;
+      
     } catch (err) {
       throw err;
     }

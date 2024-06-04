@@ -87,6 +87,34 @@ export class PostsController {
   };
   }
 
+  @Get('feed/global')
+  async getGlobalFeed( @Query('amount') amount:number) {
+    try{
+    if (amount !== undefined) {
+      return await this.postsService.findRecentPosts(amount);
+    }else{
+      return await this.postsService.findRecentPosts(10);
+    }
+  }catch(error){
+    console.log(error);
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  };
+  }
+
+  @Get('feed/main/:id')
+  async getMainFeed( @Query('amount') amount:number, @Param('id') id: string) {
+    try{
+    if (amount !== undefined) {
+      return await this.postsService.findFollowedPosts(id,amount);
+    }else{
+      return await this.postsService.findFollowedPosts(id,10);
+    }
+  }catch(error){
+    console.log(error);
+    throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+  };
+  }
+
   @Get('user/:id')
   async findByUserId(@Param('id') id: string) {
     try{
