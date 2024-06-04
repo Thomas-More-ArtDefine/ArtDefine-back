@@ -27,7 +27,7 @@ export class FeedbackQuestion {
     template_id: string;
 
     @Column({ type: 'json', nullable: true })
-    content: JSON;
+    content: string;
 
     @ManyToOne(type => FeedbackTemplate, template => template.questions, {onDelete: "CASCADE"})
     @JoinColumn({name: 'template_id'})
