@@ -8,10 +8,10 @@ export default class FeedbackResultSeeder implements Seeder {
 
 
     private templates: FeedbackTemplate[];
-    private user: User;
+    private users: User[];
 
-    public setUser(user: User): void {
-        this.user = user;
+    public setUsers(users: User[]): void {
+        this.users = users;
     }
 
     public setTemplates(templates: FeedbackTemplate[]): void {
@@ -29,12 +29,20 @@ export default class FeedbackResultSeeder implements Seeder {
     const feedbackResults: FeedbackResult[] = [
         {
             id: undefined,
-            feedback_result: {ansewer: "a result"} as unknown as JSON,
-            user_id: this.user.id,
-            user: this.user,
+            feedback_result: {response: "4"} as unknown as JSON,
+            user_id: this.users[0].id,
+            user: this.users[0],
             question_id: this.templates[0].questions[0].id,
             question: this.templates[0].questions[0],
         },
+        {
+          id: undefined,
+            feedback_result: {response: "1"} as unknown as JSON,
+            user_id: this.users[1].id,
+            user: this.users[1],
+            question_id: this.templates[0].questions[0].id,
+            question: this.templates[0].questions[0],
+        }
     ];
 
    

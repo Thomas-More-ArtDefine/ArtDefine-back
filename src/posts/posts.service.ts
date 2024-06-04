@@ -262,7 +262,8 @@ export class PostsService {
             group: 'folders.group',
             group_members: 'group.members',
             feedback_template: 'post.feedback_template',
-            FeedbackQuestion: 'feedback_template.questions',
+            feedback_question: 'feedback_template.questions',
+            feedback_results: 'feedback_question.feedback_results',
           },
         },
       });
