@@ -203,7 +203,7 @@ export class PostsService {
 
       list.forEach((post)=>{
         
-        if (!this.includesPost(data, post)) {
+        if (!this.includesPost(data, post) && post.user_id.toString() !== id.toString()) {
           data.push(post);
         }
         

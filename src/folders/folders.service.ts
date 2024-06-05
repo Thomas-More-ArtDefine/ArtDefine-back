@@ -259,6 +259,7 @@ function getBasicUserInfo(user: User): User {
     throw new NotAcceptableException('No user given');
   }
   const cleanedUser: User = new User();
+  cleanedUser.id = user.id;
   cleanedUser.user_name = user.user_name;
   cleanedUser.user_subtitle = user.user_subtitle;
   cleanedUser.user_profile_picture = user.user_profile_picture;
