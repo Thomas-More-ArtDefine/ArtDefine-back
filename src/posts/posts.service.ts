@@ -116,7 +116,8 @@ export class PostsService {
     exclude?: string,
   ): Promise<Post[]> {
     try {
-      const query: string = 'SELECT *, "post"."id" as "post_id" FROM post LEFT JOIN "user" ON "post"."user_id" = "user"."id" ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
+      const str = "'public'"
+      const query: string = 'SELECT *, "post"."id" as "post_id" FROM post LEFT JOIN "user" ON "post"."user_id" = "user"."id" WHERE "post"."post_visibility" = '+str+' ORDER BY RANDOM() LIMIT '+numberPosts.toString()+';';
       return cleanFeedOutput(await this.postsRepository.query(query));
     } catch (err) {
       throw err;
