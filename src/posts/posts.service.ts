@@ -40,6 +40,10 @@ export class PostsService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+    if (user.folders && user.folders.length !== 0) {
+      createPostDto.folders.push(user.folders[0]);
+    }
+    
         
       return await this.postsRepository.save(createPostDto);
     } catch (err) {

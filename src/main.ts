@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SeederService } from './seeder.service';
+import { json } from 'express';
 
 async function bootstrap() {
 
@@ -14,6 +15,7 @@ async function bootstrap() {
   const seeder = app.get(SeederService);
   await seeder.seed();
   app.enableCors();
+  app.use(json({ limit: '50mb' }));
   await app.listen(parseInt(process.env.PORT));
 }
 bootstrap();

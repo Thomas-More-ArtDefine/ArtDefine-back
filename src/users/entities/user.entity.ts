@@ -46,25 +46,25 @@ export class User {
   user_deactivation_date: Date;
 
   @OneToMany(type => Post, post => post.user, {onDelete:'CASCADE'})
-  posts: []; 
+  posts: Post[]; 
 
   @OneToMany(type => GroupMember, groupMember => groupMember.member, {onDelete:'CASCADE'})
-  groups: [];
+  groups: GroupMember[];
 
   @OneToMany(type => Directmessage, directmessage => directmessage.sender, {cascade: true})
-  send_messages: [];
+  send_messages: Directmessage[];
 
   @OneToMany(type => Directmessage, directmessage => directmessage.receiver, {cascade: true})
-  received_messages: [];
+  received_messages: Directmessage[];
 
   @OneToMany(type => Link, link => link.user, {onDelete:'CASCADE'})
-  links: [];
+  links: Link[];
 
   @OneToMany(type => Folder, folder => folder.user, {onDelete:'CASCADE'})
-  folders: [];
+  folders: Folder[];
 
   @OneToMany(type => FeedbackResult, feedback => feedback.user)
-  given_feedback: [];
+  given_feedback: FeedbackResult[];
 
   @ManyToMany(type => User)
   @JoinTable()
