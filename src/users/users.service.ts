@@ -219,6 +219,7 @@ export class UsersService {
             joinedGroups: 'user.groups',
             group: 'joinedGroups.group',
             group_members: 'group.members',
+            folders: 'group.folders',
           },
         },
       });
@@ -515,6 +516,17 @@ function getBasicGroupInfo(group: Group): Group {
   cleanedGroup.group_bio = group.group_bio;
   cleanedGroup.group_setting_visibility = group.group_setting_visibility;
   cleanedGroup.group_setting_join = group.group_setting_join;
+  cleanedGroup.folders = group.folders;
+  if (group.folders !== undefined && group.folders !== null) {
+    group.folders.forEach((folder) => {
+      folder.folder_description = undefined;
+      folder.folder_visibility = undefined;
+      folder.folder_order = undefined;
+      folder.folder_archived = undefined;
+      folder.group_id = undefined;
+    });
+    cleanedGroup.folders = group.folders;
+  }
   // used for membercount in groupcards
   if (group.members !== undefined && group.members !== null) {
     group.members.forEach((member) => {
